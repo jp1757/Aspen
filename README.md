@@ -1,2 +1,2 @@
-# JSim
-Backtesting platform
+# HASQuant
+Quant Research Enviroment
