@@ -1,0 +1,2 @@
+# JSim
+Backtesting platform
