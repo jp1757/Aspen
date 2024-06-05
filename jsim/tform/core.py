@@ -13,10 +13,11 @@ class ITForm(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def apply(self, data: pd.Series) -> pd.Series:
+    def apply(self, data: pd.DataFrame) -> pd.DataFrame:
         """
         Place transformation logic here
 
-        :param data: (pandas.Series) input data to apply transformation to
-        :return: (pandas.Series) transformed data
+        :param data: (pandas.DataFrame) input data to apply transformation to
+        :return: (pandas.DataFrame) transformed data
         """
+        pass
