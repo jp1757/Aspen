@@ -1,4 +1,4 @@
-"""Unit tests for TForm TForm"""
+"""Unit tests for Generic TForms"""
 
 import unittest
 
