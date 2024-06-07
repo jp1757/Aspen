@@ -1,6 +1,8 @@
 """
-Generic TForm container pointing to any lib
+Generic containers that can use any library function to apply a transformation
+to either a single ('TForm') or multiple ('Merge') input dataframes
 """
+import abc
 import enum
 import importlib
 
@@ -14,34 +16,42 @@ class Mode(enum.Enum):
     PASS = 2
 
 
-class Generic(tform.core.ITForm):
+class Generic(metaclass=abc.ABCMeta):
 
-    def __init__(self, mode: Mode, func: str, *, lib: str = None, **kwargs) -> None:
+    def __init__(self, func: str, *, mode: Mode = Mode.CALL, lib: str = None, **kwargs) -> None:
         """
-        Init generic instance
+        Generic constructor - see child instances for mode implementation
 
-        :param mode: (Mode) following two modes accepted:
-            - 'CALL' - input data object calls function i.e. data.sum()
-            - 'PASS' - pass data object as input to target function  i.e. numpy.sum(data)
         :param func: (str) name of target function
+        :param mode: (Mode, optional) determines if the data obj(s) call the target
+            function or are passed to the target function. Default is set to Mode.CALL
         :param lib: (str, optional) name of target lib
         :param kwargs: (dict, optional) additional keyword args to pass to target function
         """
 
         # Check Params
-        self.__mode = self.MODES.get(mode.name, None)
-        if self.__mode is None:
-            raise ValueError(
-                f"Type [{mode.name}] not valid.  Accepted values: {self.MODES.keys()}"
-            )
+        if not isinstance(mode, tform.generic.Mode):
+            raise ValueError(f"Mode [{mode}] must be of type [{Mode}]")
 
         # Store instance paras
-        self.type = mode
+        self.mode = mode
         self.func = func
         self.kwargs = kwargs
 
         # Load library
         self.lib = importlib.import_module(lib) if lib is not None else None
+
+
+class TForm(tform.core.ITForm, Generic):
+    """
+    TForm instance for applying a transformation ot a single dataframe
+
+    The following illustrates how the constructor mode param performs:
+
+    :param mode: (Mode) following two modes accepted:
+        - 'CALL' - input data object calls function i.e. data.sum()
+        - 'PASS' - pass data object as input to target function  i.e. numpy.sum(data)
+    """
 
     def apply(self, data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -50,53 +60,28 @@ class Generic(tform.core.ITForm):
         :param data: (pd.DataFrame) data to transform
         :return: (pd.DataFrame) transformed data
         """
-        return self.__mode(self, data)
 
-    def call(self, data: pd.DataFrame) -> pd.DataFrame:
-        """Call target function on data"""
-        return getattr(data, self.func)(**self.kwargs)
+        if self.mode == Mode.CALL:
+            """Call target function on data"""
+            return getattr(data, self.func)(**self.kwargs)
 
-    def args(self, data: pd.DataFrame) -> pd.DataFrame:
-        """Pass data as an argument to target function"""
-        return getattr(self.lib, self.func)(data, **self.kwargs)
-
-    # Modes
-    MODES = {
-        "CALL": call,
-        "PASS": args
-    }
+        elif self.mode == Mode.PASS:
+            """Pass data as an argument to target function"""
+            return getattr(self.lib, self.func)(data, **self.kwargs)
 
 
-class Merge(tform.core.IMerge):
+class Merge(tform.core.IMerge, Generic):
+    """
+    Merge instance for applying a transformation to multiple dataframes.
 
-    def __init__(self, mode: Mode, func: str, *, lib: str = None, **kwargs) -> None:
-        """
-        Init Merge instance
+    The following illustrates how the constructor mode param performs:
 
-        :param mode: (Mode) following two modes accepted:
-            - 'CALL' - 1st data object in args calls function & rest are passed
-                       as positional args i.e. data[0].func(*data[1:])
-            - 'PASS' - pass data objects as inputs to target function
-                       i.e. func(*data)
-        :param func: (str) name of target function
-        :param lib: (str, optional) name of target lib
-        :param kwargs: (dict, optional) additional keyword args to pass to target function
-        """
-
-        # Check Params
-        self.__mode = self.MODES.get(mode.name, None)
-        if self.__mode is None:
-            raise ValueError(
-                f"Type [{mode.name}] not valid.  Accepted values: {self.MODES.keys()}"
-            )
-
-        # Store instance paras
-        self.type = mode
-        self.func = func
-        self.kwargs = kwargs
-
-        # Load library
-        self.lib = importlib.import_module(lib) if lib is not None else None
+    :param mode: (Mode) following two modes accepted:
+        - 'CALL' - 1st data object in args calls function & rest are passed
+                   as positional args i.e. data[0].func(*data[1:])
+        - 'PASS' - pass data objects as inputs to target function
+                   i.e. func(*data)
+    """
 
     def merge(self, *data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -105,18 +90,10 @@ class Merge(tform.core.IMerge):
         :param data: (List[pd.DataFrame]) input data args to merge
         :return: (pd.DataFrame) merged dataframe
         """
-        return self.__mode(self, *data)
+        if self.mode == Mode.CALL:
+            """Call target function on data"""
+            return getattr(data[0], self.func)(*data[1:], **self.kwargs)
 
-    def call(self, *data: pd.DataFrame) -> pd.DataFrame:
-        """Call target function on data"""
-        return getattr(data[0], self.func)(*data[1:], **self.kwargs)
-
-    def args(self, *data: pd.DataFrame) -> pd.DataFrame:
-        """Pass data as an argument to target function"""
-        return getattr(self.lib, self.func)(*data, **self.kwargs)
-
-    # Modes
-    MODES = {
-        "CALL": call,
-        "PASS": args
-    }
+        elif self.mode == Mode.PASS:
+            """Pass data as an argument to target function"""
+            return getattr(self.lib, self.func)(*data, **self.kwargs)
