@@ -53,12 +53,12 @@ class TForm(tform.core.ITForm, Generic):
         - 'PASS' - pass data object as input to target function  i.e. numpy.sum(data)
     """
 
-    def apply(self, data: pd.DataFrame) -> pd.DataFrame:
+    def apply(self, data: pd.DataFrame, *other: pd.DataFrame) -> pd.DataFrame:
         """
-        Apply transformation using target function passed to __init__ to input data
+        :param data: (pandas.DataFrame) input data to apply transformation to
+        :param *other: (pandas.DataFrame) other data frames to use in transformation
 
-        :param data: (pd.DataFrame) data to transform
-        :return: (pd.DataFrame) transformed data
+        :return: (pandas.DataFrame) transformed data
         """
 
         if self.mode == Mode.CALL:
@@ -70,7 +70,7 @@ class TForm(tform.core.ITForm, Generic):
             return getattr(self.lib, self.func)(data, **self.kwargs)
 
 
-class Merge(tform.core.IMerge, Generic):
+class Merge(tform.core.ITForm, Generic):
     """
     Merge instance for applying a transformation to multiple dataframes.
 
@@ -83,17 +83,19 @@ class Merge(tform.core.IMerge, Generic):
                    i.e. func(*data)
     """
 
-    def merge(self, *data: pd.DataFrame) -> pd.DataFrame:
+    def apply(self, data: pd.DataFrame, *other: pd.DataFrame) -> pd.DataFrame:
         """
-        Merge multiple dataframes
+        Merge multiple dataframes via transformation func passed to __init__
 
-        :param data: (List[pd.DataFrame]) input data args to merge
-        :return: (pd.DataFrame) merged dataframe
+        :param data: (pandas.DataFrame) input data to apply transformation to
+        :param *other: (pandas.DataFrame) other data frames to use in transformation
+
+        :return: (pandas.DataFrame) transformed data
         """
         if self.mode == Mode.CALL:
             """Call target function on data"""
-            return getattr(data[0], self.func)(*data[1:], **self.kwargs)
+            return getattr(data, self.func)(*other, **self.kwargs)
 
         elif self.mode == Mode.PASS:
             """Pass data as an argument to target function"""
-            return getattr(self.lib, self.func)(*data, **self.kwargs)
+            return getattr(self.lib, self.func)(data, *other, **self.kwargs)
