@@ -68,7 +68,7 @@ class TestMerge(unittest.TestCase):
         """
         Test calling a transform on the data object, where the dataframe calls the func
         """
-        data = Merge("mul").merge(self.data, self.data2)
+        data = Merge("mul").apply(self.data, self.data2)
 
         pd.testing.assert_frame_equal(self.data.mul(self.data2), data)
 
@@ -77,7 +77,7 @@ class TestMerge(unittest.TestCase):
         Test calling a transform where the dataframe is passed to the target func
         """
         tf = Merge("multiply", mode=tform.generic.Mode.PASS, lib="numpy")
-        data = tf.merge(self.data, self.data2)
+        data = tf.apply(self.data, self.data2)
 
         pd.testing.assert_frame_equal(np.multiply(self.data, self.data2), data)
 
@@ -86,6 +86,6 @@ class TestMerge(unittest.TestCase):
         Test calling a transform on the data object, where the dataframe calls the func.
         Passing extra keyword args to func
         """
-        data = Merge("mul", fill_value=0).merge(self.data, self.data2)
+        data = Merge("mul", fill_value=0).apply(self.data, self.data2)
 
         pd.testing.assert_frame_equal(self.data.mul(self.data2, fill_value=0), data)
