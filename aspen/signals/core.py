@@ -13,5 +13,5 @@ class ISignal(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def calculate(self, **data: pd.DataFrame):
+    def calculate(self) -> pd.DataFrame:
         pass
