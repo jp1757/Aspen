@@ -4,7 +4,7 @@ aka function composition
 """
 import pandas as pd
 
-from tform.core import ITForm
+from aspen.tform.core import ITForm
 
 
 class Pipeline(ITForm):

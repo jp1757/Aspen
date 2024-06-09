@@ -8,7 +8,8 @@ import importlib
 
 import pandas as pd
 
-import tform.core
+import aspen.tform.generic
+from aspen.tform.core import ITForm
 
 
 class Mode(enum.Enum):
@@ -32,7 +33,7 @@ class Generic(metaclass=abc.ABCMeta):
         """
 
         # Check Params
-        if not isinstance(mode, tform.generic.Mode):
+        if not isinstance(mode, aspen.tform.generic.Mode):
             raise ValueError(f"Mode [{mode}] must be of type [{Mode}]")
 
         # Store instance paras
@@ -44,7 +45,7 @@ class Generic(metaclass=abc.ABCMeta):
         self.lib = importlib.import_module(lib) if lib is not None else None
 
 
-class TForm(tform.core.ITForm, Generic):
+class TForm(ITForm, Generic):
     """
     TForm instance for applying a transformation ot a single dataframe
 
@@ -72,7 +73,7 @@ class TForm(tform.core.ITForm, Generic):
             return getattr(self.lib, self.func)(data, **self.kwargs)
 
 
-class Merge(tform.core.ITForm, Generic):
+class Merge(ITForm, Generic):
     """
     Merge instance for applying a transformation to multiple dataframes.
 
