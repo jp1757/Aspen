@@ -73,3 +73,22 @@ class TestSignal(unittest.TestCase):
         rolling_pe = pe.rolling(3).mean()
 
         pd.testing.assert_frame_equal(signal, rolling_pe)
+
+    def test_invalid_mapping(self):
+        """Test mapping not found raises exception"""
+
+        sig = Signal(
+            Leaf(
+                Pipeline(TForm("rolling", window=3), TForm("mean")),
+                "signal",
+                mappings=["tr", "null"]
+            ),
+            data={"tr": (1 + self.data["returns"]).cumprod()}
+        )
+
+        with self.assertRaises(Exception) as context:
+            sig.calculate()
+
+        print(str(context))
+
+        self.assertTrue("Mappings not found in heap: {'null'}" in str(context.exception))
