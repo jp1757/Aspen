@@ -6,7 +6,7 @@ from typing import List
 
 import pandas as pd
 
-from tform.core import ITForm
+from aspen.tform.core import ITForm
 
 
 class ILeaf(metaclass=abc.ABCMeta):
