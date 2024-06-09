@@ -1,10 +1,11 @@
 """
 Provides a definition for a Signal object
 """
-import pandas as pd
 from typing import Dict
 
-from signals import ISignal, ILeaf
+import pandas as pd
+
+from aspen.signals import ISignal, ILeaf
 
 
 class Signal(ISignal):
@@ -17,7 +18,6 @@ class Signal(ISignal):
         self.data = data
 
     def calculate(self) -> pd.DataFrame:
-
         signal = None
         for leaf in self.leaves:
             # Apply transformation

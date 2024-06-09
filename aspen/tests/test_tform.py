@@ -1,4 +1,4 @@
-"""Unit tests for Generic TForms"""
+"""Unit tests for TForms Package"""
 
 import os
 import sys
