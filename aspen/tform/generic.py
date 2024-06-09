@@ -18,7 +18,9 @@ class Mode(enum.Enum):
 
 class Generic(metaclass=abc.ABCMeta):
 
-    def __init__(self, func: str, *, mode: Mode = Mode.CALL, lib: str = None, **kwargs) -> None:
+    def __init__(
+            self, func: str, *, mode: Mode = Mode.CALL, lib: str = None, **kwargs
+    ) -> None:
         """
         Generic constructor - see child instances for mode implementation
 
