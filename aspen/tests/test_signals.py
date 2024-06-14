@@ -17,7 +17,7 @@ class TestSignal(unittest.TestCase):
 
     def setUp(self):
         # Create random returns for 4 stocks
-        dates = pd.date_range("01/01/2020", periods=12, freq="BME")
+        dates = pd.date_range("01/01/2020", periods=12, freq="BM")
         stocks = ["aapl", "msft", "tsla", "vod"]
         returns = pd.DataFrame(
             np.random.rand(len(dates), len(stocks)),
