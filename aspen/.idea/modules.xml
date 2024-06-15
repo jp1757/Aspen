@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/jsim.iml" filepath="$PROJECT_DIR$/.idea/jsim.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/aspen.iml" filepath="$PROJECT_DIR$/.idea/aspen.iml" />
     </modules>
   </component>
 </project>
