@@ -4,30 +4,12 @@ Test asset returns calculations
 
 import unittest
 import pandas as pd
-import numpy as np
 
 from aspen.tform.library.asset import Returns
+import tests.tform.library.utils as utils
 
 
 class TestReturns(unittest.TestCase):
-
-    @classmethod
-    def returns(cls, freq: str):
-        dates = pd.date_range(
-            pd.Timestamp(year=2010, month=1, day=1),
-            end=pd.Timestamp(year=2010, month=12, day=31),
-            freq=freq
-        )
-        stocks = ["aapl", "msft", "tsla", "vod"]
-        returns = pd.DataFrame(
-            np.random.rand(len(dates), len(stocks)) / 20,
-            index=pd.Index(dates, name="date"),
-            columns=stocks
-        )
-        returns.iloc[0] = 0
-        tr = (1 + returns).cumprod()
-
-        return dates, tr
 
     def test_daily_returns(self):
         """
@@ -35,7 +17,7 @@ class TestReturns(unittest.TestCase):
         """
 
         # Get dummy returns
-        dates, tr = self.returns(freq="B")
+        dates, tr = utils.returns(freq="B")
 
         # Create target dates
         tgt_dates = pd.date_range(start=dates.min(), periods=12, freq="M")
@@ -58,7 +40,7 @@ class TestReturns(unittest.TestCase):
         """
 
         # Get dummy returns
-        dates, tr = self.returns(freq="BM")
+        dates, tr = utils.returns(freq="BM")
 
         # Create target dates
         tgt_dates = pd.date_range(start=dates.min(), periods=12, freq="M")

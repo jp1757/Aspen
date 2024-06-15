@@ -33,3 +33,25 @@ class Reindex(ITForm):
 
         # Reindex to dates passed to __init__
         return data.reindex(self.dates, method="ffill")
+
+
+class Align(ITForm):
+    """
+    Align multiple dataframes
+    """
+
+    def __init__(self, *dates: pd.DatetimeIndex) -> None:
+        """
+        Init object to align
+        :param dates: (pd.DatetimeIndex) dates of input dataframes to align
+        """
+        self.dates = dates
+
+    def apply(self, data: pd.DataFrame, *other: pd.DataFrame) -> pd.DataFrame:
+        """
+        Place transformation logic here
+
+        :param data: (pandas.DataFrame) input data to apply transformation to
+        :param *other: (pandas.DataFrame) other data frames to use in transformation
+        :return: (pandas.DataFrame) transformed data
+        """
