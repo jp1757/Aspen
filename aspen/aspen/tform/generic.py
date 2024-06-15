@@ -28,7 +28,7 @@ class Generic(metaclass=abc.ABCMeta):
         :param func: (str) name of target function
         :param mode: (Mode, optional) determines if the data obj(s) call the target
             function or are passed to the target function. Default is set to Mode.CALL
-        :param lib: (str, optional) name of target lib
+        :param lib: (str, optional) name of target library
         :param kwargs: (dict, optional) additional keyword args to pass to target function
         """
 
