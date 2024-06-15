@@ -40,12 +40,32 @@ class Align(ITForm):
     Align multiple dataframes
     """
 
-    def __init__(self, *dates: pd.DatetimeIndex) -> None:
+    def __init__(self, *dates: pd.DatetimeIndex, fillforward: bool = True) -> None:
         """
         Init object to align
         :param dates: (pd.DatetimeIndex) dates of input dataframes to align
         """
-        self.dates = dates
+
+        # Store instance params
+        self.index = dates
+        self.method = "ffill" if fillforward else None
+
+        # Build dates
+        self.dates = self.intersect(*dates)
+
+    @staticmethod
+    def intersect(*dates: pd.DatetimeIndex) -> pd.DatetimeIndex:
+        """
+        Get intersection set of all input dates
+        :param dates: (pd.DatetimeIndex) input date indexes
+        :return: (pd.DatetimeIndex) dates
+        """
+
+        _dates = dates[0]
+        for d in dates[1:]:
+            _dates = _dates.intersection(d)
+
+        return _dates.sort_values()
 
     def apply(self, data: pd.DataFrame, *other: pd.DataFrame) -> pd.DataFrame:
         """
@@ -55,3 +75,11 @@ class Align(ITForm):
         :param *other: (pandas.DataFrame) other data frames to use in transformation
         :return: (pandas.DataFrame) transformed data
         """
+
+        # Re-index input dataframe to all days & fill forward so that there is
+        # guaranteed to be data on all input dates
+        all_days = pd.date_range(data.index.min(), data.index.max(), freq="D")
+        data = data.reindex(all_days, method=self.method)
+
+        # Finally re-index data back to union of all input dates
+        return data.reindex(self.dates, method=self.method)
