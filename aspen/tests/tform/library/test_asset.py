@@ -6,7 +6,7 @@ import unittest
 import pandas as pd
 
 from aspen.tform.library.asset import Returns
-import tests.tform.library.utils as utils
+import tests.utils as utils
 
 
 class TestReturns(unittest.TestCase):

@@ -4,29 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/aspen.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aspen.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/tform/library/align.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/tform/library/align.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/tform/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/tform/library/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/tform/library/test_align.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/tform/library/test_align.py" afterDir="false" />
-    </list>
+    <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2hvOLhRF2ma7Rc9zfLsD6h0IJiK" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -34,15 +30,23 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python tests.Python tests for test_align.TestAlign.test_align.executor": "Run",
     "Python tests.Python tests for test_align.TestReindex.executor": "Run",
     "Python tests.Python tests in tests.executor": "Run",
     "Python tests.Python tests in tform.executor": "Run",
+    "Python tests.pytest for test_btest.TestBTest.test_weights.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "tf__lib__alignment",
-    "last_opened_file_path": "C:/Users/james/dev/Research/HASQuant/aspen"
+    "git-widget-placeholder": "backtest",
+    "last_opened_file_path": "C:/Users/james/dev/Research/HASQuant/aspen",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\james\dev\Research\HASQuant\aspen\tests" />
+    </key>
+  </component>
   <component name="RunManager" selected="Python tests.Python tests in tests">
     <configuration name="Python tests for test_align.TestAlign.test_align" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="aspen" />
@@ -104,9 +108,27 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="pytest for test_btest.TestBTest.test_weights" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="aspen" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_btest.TestBTest.test_weights&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python tests.Python tests in tests" />
+        <item itemvalue="Python tests.pytest for test_btest.TestBTest.test_weights" />
         <item itemvalue="Python tests.Python tests for test_align.TestAlign.test_align" />
         <item itemvalue="Python tests.Python tests in tform" />
         <item itemvalue="Python tests.Python tests for test_align.TestReindex" />
