@@ -8,7 +8,7 @@ from aspen.backtest.core import IBTest
 from aspen.signals.core import ISignals
 from aspen.pcr.core import IPortConstruct
 
-import aspen.tform.lib.asset
+from aspen.tform.library.align import Reindex
 
 
 class BTest(IBTest):
@@ -32,9 +32,8 @@ class BTest(IBTest):
         self.pcr = pcr
         self.normalise = normalise
 
-        # Get asset returns indexed to input dates
-        self.returns = aspen.tform.lib.asset.Returns(dates).apply(tr)
-        self.returns_shift = self.returns.shift(-1)
+        # Align total return data to input dates
+        self.tr = Reindex(dates).apply(tr)
 
     def run(self) -> pd.DataFrame:
         """
@@ -47,9 +46,13 @@ class BTest(IBTest):
 
         weights = [
             self.pcr.weights(
-                date=d, signals=signals.loc[:d], asset=self.returns.loc[:d]
+                date=d, signals=signals.loc[:d], asset=self.tr.loc[:d]
             )
             for d in self.dates
+            if len(signals.loc[:d]) > 0
         ]
 
-        return weights
+        wgt_df = pd.concat(weights, axis=1).T
+        wgt_df.index.freq = pd.infer_freq(wgt_df.index)
+
+        return wgt_df

@@ -7,7 +7,7 @@ import abc
 import pandas as pd
 
 
-class IBTest(abc.ABCMeta):
+class IBTest(metaclass=abc.ABCMeta):
     """
     Sets out the structure that backtest objects should follow
     """

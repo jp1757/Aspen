@@ -6,7 +6,7 @@ import unittest
 import pandas as pd
 
 from aspen.tform.library.align import Reindex, Align
-import tests.tform.library.utils as utils
+import tests.utils as utils
 
 
 class TestAlign(unittest.TestCase):
