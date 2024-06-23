@@ -76,6 +76,10 @@ class Align(ITForm):
         :return: (pandas.DataFrame) transformed data
         """
 
+        # Check index equal & just return if the case
+        if data.index.equals(self.dates):
+            return data
+
         # Re-index input dataframe to all days & fill forward so that there is
         # guaranteed to be data on all input dates
         all_days = pd.date_range(data.index.min(), data.index.max(), freq="D")

@@ -1,10 +1,37 @@
 """
 Defines a portfolio object
 """
+from typing import Tuple
+
 import numpy as np
 import pandas as pd
 
-from aspen.tform.library.align import Reindex
+from aspen.tform.library.align import Align
+
+
+def returns(
+        *, dates: pd.DatetimeIndex, weights: pd.DataFrame, asset_tr: pd.DataFrame
+) -> Tuple[pd.Series, pd.Series]:
+    # Re-index total return prices to align with weights
+    weights = Align(dates).apply(weights, fillforward=True)
+    asset_tr = Align(dates).apply(asset_tr, fillforward=True)
+
+    # Calculate returns & shift to align with weights for correct period
+    _returns = asset_tr.pct_change().shift(-1)
+
+    # Multiply by weights & sum for portfolio returns
+    port = (_returns * weights).sum(axis=1).shift()
+
+    # Shift returns forward to re-align with correct period
+    port = port.shift(1)
+
+    # Calculate portfolio total return index
+    port.iloc[0] = 0
+    tr = (1 + port).cumprod()
+
+    port.iloc[0] = np.NaN
+
+    return port, tr
 
 
 class Portfolio(object):
@@ -13,38 +40,77 @@ class Portfolio(object):
     & converts to a set of historical portfolio returns
     """
 
-    def __init__(self, tr: pd.DataFrame, weights: pd.DataFrame) -> None:
+    def __init__(self, asset_tr: pd.DataFrame, weights: pd.DataFrame) -> None:
         # Check assets appear in total returns dataframe
-        asset_diff = set(weights.columns) - set(tr.columns)
+        asset_diff = set(weights.columns) - set(asset_tr.columns)
         if len(asset_diff) > 0:
             raise ValueError(f"No returns data for: [{asset_diff}]")
 
-        self.weights = weights.copy()
-        self.asset_tr = tr[self.weights.columns].copy()
+        self.__wgts = weights.copy()
+        self.asset_tr = asset_tr[self.weights.columns].copy()
 
         # Calculate returns
-        self.returns, self.tr = self._returns()
+        self.__ret, self.__tr = returns(
+            dates=weights.index, weights=weights, asset_tr=asset_tr
+        )
 
-    def _returns(self) -> pd.DataFrame:
-        # Re-index total returns to align with weights
-        rtf = Reindex(self.weights.index).apply(self.asset_tr)
+    @property
+    def weights(self) -> pd.DataFrame:
+        """
+        Return a dataframe of asset weights through time. Indexed by dates
+        with assets as columns
+        """
+        return self.__wgts
 
-        # Calculate pct change & shift to align with weights for correct period
-        returns = rtf.pct_change().shift(-1)
+    @property
+    def returns(self) -> pd.Series:
+        """Returns a series of portfolio returns indexed by date"""
+        return self.__ret
 
-        # Multiply by weights & sum for portfolio returns
-        port = (returns * self.weights).sum(axis=1).shift()
+    @property
+    def tr(self) -> pd.Series:
+        """Returns a series of portfolio total return prices indexed by date"""
+        return self.__tr
 
-        # Shift returns forward to re-align with correct period
-        port = port.shift(1)
+    def drift(self, asset_tr: pd.DataFrame) -> pd.DataFrame:
+        """
+        Calculate drifted asset portfolio weights
 
-        # Calculate portfolio total return index
-        port.iloc[0] = 0
-        tr = (1 + port).cumprod()
+        wi,t+1 = wi,t x ((1+Ri,t) / (1+Rp,t))
 
-        port.iloc[0] = np.NaN
+        (w_{i,t+1}) represents the drifted weight for asset (i) in the next period.
+        (R_{i,t}) is the return of asset (i) in the current period.
+        (R_{p,t}) is the portfolio return in the current period.
 
-        return port, tr
+        :param asset_tr: (pd.DataFrame) asset total return price data set to a higher
+            frequency than the asset weights passed through __init__. Index set to
+            dates, columns set to assets.
+            i.e. if the asset weights are monthly then pass something like weekly or
+            daily total return prices for this to work.
 
-    def drift(self, daily_tr: pd.DataFrame) -> pd.DataFrame:
-        pass
+        :return: (pd.DataFrame) return a dataframe of drifted weights indexed to the
+            same date index passed via the asset_tr param.  Index set to dates, columns
+            set to assets.
+        """
+
+        # Calculate returns indexed to higher frequency asset returns filling forward
+        # the static weight from the previous period
+        _ret, _tr = returns(dates=asset_tr.index, weights=self.weights, asset_tr=asset_tr)
+
+        # Align weights with asset total return prices
+        weights = Align(asset_tr.index).apply(self.weights, fillforward=True)
+
+        # Shift weights to align with returns
+        wgt_shift = weights.shift(1)
+
+        # Calculate asset returns
+        asset_ret = asset_tr.pct_change()
+
+        # Calculate inter-period drifted weights
+        drift = wgt_shift * ((1 + asset_ret) / (1 + _ret))
+
+        # Merge in actual re-balance weights to drift weights
+        # 1st remove actual weights dates from drift dataframe
+        drift = drift.loc[list(set(drift.index) - set(self.weights.index))]
+        # Next concat + merge drift weights with actual weights
+        return pd.concat([drift, self.weights]).sort_index()
