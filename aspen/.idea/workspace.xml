@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="" />
+    <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/aspen/backtest/portfolio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_signals.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,7 +41,7 @@
     "Python tests.pytest for test_btest.TestBTest.test_weights.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "backtest",
+    "git-widget-placeholder": "backtest__returns",
     "last_opened_file_path": "C:/Users/james/dev/Research/HASQuant/aspen",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable"
   }
