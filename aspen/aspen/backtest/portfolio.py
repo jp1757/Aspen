@@ -10,20 +10,33 @@ from aspen.tform.library.align import Align
 
 
 def returns(
-        *, dates: pd.DatetimeIndex, weights: pd.DataFrame, asset_tr: pd.DataFrame
+        *,
+        dates: pd.DatetimeIndex,
+        weights: pd.DataFrame,
+        asset_tr: pd.DataFrame,
+        fillna: bool = True,
 ) -> Tuple[pd.Series, pd.Series]:
-    # Re-index total return prices to align with weights
-    weights = Align(dates).apply(weights, fillforward=True)
-    asset_tr = Align(dates).apply(asset_tr, fillforward=True)
+    # Re-index total return prices & weights to align with dates
+    weights = Align(dates, fillforward=True).apply(weights)
+    asset_tr = Align(dates, fillforward=True).apply(asset_tr)
 
     # Calculate returns & shift to align with weights for correct period
     _returns = asset_tr.pct_change().shift(-1)
 
     # Multiply by weights & sum for portfolio returns
-    port = (_returns * weights).sum(axis=1).shift()
+    port = (_returns * weights).sum(axis=1)
 
     # Shift returns forward to re-align with correct period
     port = port.shift(1)
+
+    # Drop leading successive NaNs leaving one
+    start_key = port.isna().cumsum().diff().idxmin()
+    start_idx = port.index.get_loc(start_key)
+    port = port.iloc[start_idx:].copy()
+
+    # Fill NaNs with Zeros
+    if fillna:
+        port.fillna(0, inplace=True)
 
     # Calculate portfolio total return index
     port.iloc[0] = 0
@@ -93,12 +106,15 @@ class Portfolio(object):
             set to assets.
         """
 
+        # Match weights start date
+        asset_tr = asset_tr.loc[self.weights.index.min():]
+
         # Calculate returns indexed to higher frequency asset returns filling forward
         # the static weight from the previous period
         _ret, _tr = returns(dates=asset_tr.index, weights=self.weights, asset_tr=asset_tr)
 
         # Align weights with asset total return prices
-        weights = Align(asset_tr.index).apply(self.weights, fillforward=True)
+        weights = Align(asset_tr.index, fillforward=True).apply(self.weights)
 
         # Shift weights to align with returns
         wgt_shift = weights.shift(1)

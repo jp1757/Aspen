@@ -8,6 +8,7 @@ import pandas as pd
 from aspen.signals import ISignals
 from aspen.pcr import IPortConstruct
 from aspen.backtest.generic import BTest
+import aspen.backtest.portfolio
 import tests.utils
 
 
@@ -37,6 +38,7 @@ class PCR(IPortConstruct):
 
 
 class TestBTest(unittest.TestCase):
+    """Test generic backtesting components"""
 
     def setUp(self):
         # Load dummy returns
@@ -74,3 +76,69 @@ class TestBTest(unittest.TestCase):
         d3 = self.sig_df.index[10]
         wgt3 = PCR().weights(date=d3, signals=self.sig_df.iloc[[10]], asset=None)
         pd.testing.assert_series_equal(wgt3, btdf.loc[d3])
+
+
+class TestPortfolio(unittest.TestCase):
+    """Test portfolio components"""
+
+    def setUp(self):
+        # Load dummy data
+        d1, r1 = tests.utils.returns("B", sdate=pd.Timestamp(year=2010, month=1, day=1))
+        d2, r2 = tests.utils.returns("M", sdate=pd.Timestamp(year=2010, month=1, day=1))
+        d3, r3 = tests.utils.returns("BM", sdate=pd.Timestamp(year=2010, month=1, day=1))
+
+        self.d1 = d1
+        self.r1 = r1
+        self.d2 = d2
+        self.r2 = r2
+        self.d3 = d3
+        self.r3 = r3
+
+    def test_monthly(self):
+        """
+        Test calculating portfolio returns from business month-end weights & calendar
+        month-end asset total return data
+        """
+
+        # Prices M
+        tr = (1 + self.r2).cumprod()
+        # Weights BM
+        wgts = self.r3.divide(self.r3.sum(axis=1), axis=0).fillna(0)
+        # Calculate returns with appropriate alignment
+        tr_cols = [f"{x}_tr" for x in tr.columns]
+        ret_cols = [f"{x}_ret" for x in tr_cols]
+        ret_shift_cols = [f"{x}_-1" for x in ret_cols]
+        wgt_cols = [f"{x}_wgt" for x in wgts.columns]
+        df = pd.concat(
+            [
+                tr.rename(columns=dict(zip(tr.columns, tr_cols))),
+                wgts.rename(columns=dict(zip(wgts.columns, wgt_cols)))
+            ],
+            axis=1
+        )
+        df = df.ffill().loc[wgts.index]
+        df[ret_cols] = df[tr_cols].pct_change().rename(
+            columns=dict(zip(tr.columns, ret_cols))
+        )
+        df[ret_shift_cols] = df[ret_cols].shift(-1)
+        w = df[wgt_cols].rename(
+            columns=dict(zip(wgt_cols, [x.replace("_wgt", "") for x in wgt_cols]))
+        )
+        ret = df[ret_shift_cols].rename(
+            columns=dict(
+                zip(ret_shift_cols, [x.replace("_tr_ret_-1", "") for x in ret_shift_cols])
+            )
+        )
+        p_ret = w * ret
+        p_ret = p_ret.shift(1)
+        p_ret = p_ret.sum(axis=1, min_count=1)
+        p_ret.index.freq = "BM"
+
+        # Run returns function
+        ret_act, tr_act = aspen.backtest.portfolio.returns(
+            dates=wgts.index, weights=wgts, asset_tr=tr
+        )
+
+        # Assertion statements
+        pd.testing.assert_series_equal(ret_act, p_ret.iloc[1:])
+        pd.testing.assert_series_equal(tr_act, (1 + ret_act.fillna(0)).cumprod())
