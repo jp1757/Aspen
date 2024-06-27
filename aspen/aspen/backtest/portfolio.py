@@ -6,7 +6,7 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 
-from aspen.tform.library.align import Align
+from aspen.tform.library.align import Align, Reindex
 
 
 def returns(
@@ -101,15 +101,15 @@ class Portfolio(object):
             set to assets.
         """
 
-        # Match weights start date
-        asset_tr = asset_tr.loc[self.weights.index.min():]
+        # Re-index to all days
+        dates = pd.date_range(start=asset_tr.index.min(), end=asset_tr.index.max())
 
         # Calculate returns indexed to higher frequency asset returns filling forward
         # the static weight from the previous period
-        _ret, _tr = returns(dates=asset_tr.index, weights=self.weights, asset_tr=asset_tr)
+        _ret, _tr = returns(dates=dates, weights=self.weights, asset_tr=asset_tr)
 
         # Align weights with asset total return prices
-        weights = Align(asset_tr.index, fillforward=True).apply(self.weights)
+        weights = Align(dates, fillforward=True).apply(self.weights)
 
         # Shift weights to align with returns
         wgt_shift = weights.shift(1)
@@ -118,10 +118,16 @@ class Portfolio(object):
         asset_ret = asset_tr.pct_change()
 
         # Calculate inter-period drifted weights
-        drift = wgt_shift * ((1 + asset_ret) / (1 + _ret))
+        drift = wgt_shift * ((1 + asset_ret).div(1 + _ret, axis=0))
 
         # Merge in actual re-balance weights to drift weights
         # 1st remove actual weights dates from drift dataframe
         drift = drift.loc[list(set(drift.index) - set(self.weights.index))]
         # Next concat + merge drift weights with actual weights
-        return pd.concat([drift, self.weights]).sort_index()
+        drift = pd.concat([drift, self.weights])
+        # Drop rows with all NaNs and sort
+        drift = drift.dropna(how="all").sort_index()
+        # Set index name
+        drift.index.name = self.weights.index.name
+
+        return drift

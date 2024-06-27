@@ -99,6 +99,9 @@ class TestPortfolio(unittest.TestCase):
         self.dBMoffset, self.rBMoffset = tests.utils.returns(
             "BM", sdate=pd.Timestamp(year=2010, month=3, day=1), months=6
         )
+        self.dW, self.rW = tests.utils.returns(
+            "W", sdate=pd.Timestamp(year=2010, month=3, day=1)
+        )
 
     @staticmethod
     def returns(*, returns: pd.DataFrame, weights: pd.DataFrame) -> None:
@@ -111,9 +114,9 @@ class TestPortfolio(unittest.TestCase):
         :return: None - runs assertion statements
         """
 
-        # Prices M
+        # Prices
         tr = (1 + returns).cumprod()
-        # Weights BM
+        # Weights
         wgts = weights.divide(weights.sum(axis=1), axis=0).fillna(0)
         # Calculate returns with appropriate alignment
         tr_cols = [f"{x}_tr" for x in tr.columns]
@@ -165,6 +168,54 @@ class TestPortfolio(unittest.TestCase):
         pd.testing.assert_series_equal(ret_act, p_ret)
         pd.testing.assert_series_equal(tr_act, (1 + ret_act.fillna(0)).cumprod())
 
+    @staticmethod
+    def drift(*, returns: pd.DataFrame, weights: pd.DataFrame) -> None:
+        """
+        Re-calculate drifted weights using dummy weights and asset total returns data
+        with varying frequency combinations
+
+        :param returns: (pd.DataFrame) asset returns date as index, assets as columns
+        :param weights: (pd.DataFrame) asset weights with date as index, assets as columns
+        :return: None - runs assertion statements
+        """
+
+        # Prices
+        tr = (1 + returns).cumprod()
+        # Weights
+        wgts = weights.iloc[1:].divide(weights.iloc[1:].sum(axis=1), axis=0).fillna(0)
+
+        # Column names
+        tr_cols = [f"{x}_tr" for x in tr.columns]
+        wgt_cols = [f"{x}_wgt" for x in tr.columns]
+        ret_cols = [f"{x}_ret" for x in tr.columns]
+        retshift_cols = [f"{x}_ret_-1" for x in tr.columns]
+        pret_cols = [f"{x}_pret" for x in tr.columns]
+
+        # Build master dataframe
+        _tr = tr.rename(columns={x: y for x, y in zip(tr.columns, tr_cols)})
+        _wgt = wgts.rename(columns={x: y for x, y in zip(tr.columns, wgt_cols)})
+        df = pd.concat([_wgt, _tr], axis=1).ffill().dropna(how="all", subset=wgt_cols)
+        df[ret_cols] = df[tr_cols].pct_change()
+        df[retshift_cols] = df[ret_cols].shift(-1)
+        df[pret_cols] = df[wgt_cols].rename(columns=dict(zip(wgt_cols, tr.columns))).mul(
+            df[retshift_cols].rename(columns=dict(zip(retshift_cols, tr.columns)))
+        )
+        df["pret_-1"] = df[pret_cols].sum(axis=1, min_count=1)
+
+        # Calculate drifted weights
+        _w = df[wgt_cols].rename(columns=dict(zip(wgt_cols, tr.columns)))
+        _ra = df[retshift_cols].rename(columns=dict(zip(retshift_cols, tr.columns)))
+        drift = (_w * (1 + _ra).div(1 + df["pret_-1"], axis=0)).shift(1)
+        drift.loc[wgts.index] = np.NaN
+        drift.dropna(how="all", inplace=True)
+        drift = pd.concat([wgts, drift]).sort_index()
+
+        # Run method to test
+        port = aspen.backtest.portfolio.Portfolio(asset_tr=tr, weights=wgts)
+
+        # Run assertion statements
+        pd.testing.assert_frame_equal(port.drift(tr), drift)
+
     def test_monthly(self):
         """
         Test calculating portfolio returns from business month-end weights & calendar
@@ -212,3 +263,24 @@ class TestPortfolio(unittest.TestCase):
         """
 
         self.returns(returns=self.rBMoffset, weights=self.rM)
+
+    def test_drift(self):
+        """
+        Test weights are drifted correctly using business month-end weights &
+        business day asset total return prices
+        """
+        self.drift(returns=self.rB, weights=self.rBM)
+
+    def test_drift(self):
+        """
+        Test weights are drifted correctly using business month-end weights &
+        business day asset total return prices
+        """
+        self.drift(returns=self.rB, weights=self.rBM)
+
+    def test_drift_weekly(self):
+        """
+        Test weights are drifted correctly using business month-end weights &
+        weekly asset total return prices
+        """
+        self.drift(returns=self.rW, weights=self.rBM)
