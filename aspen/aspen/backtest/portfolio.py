@@ -10,11 +10,7 @@ from aspen.tform.library.align import Align
 
 
 def returns(
-        *,
-        dates: pd.DatetimeIndex,
-        weights: pd.DataFrame,
-        asset_tr: pd.DataFrame,
-        fillna: bool = True,
+        *, dates: pd.DatetimeIndex, weights: pd.DataFrame, asset_tr: pd.DataFrame,
 ) -> Tuple[pd.Series, pd.Series]:
     # Re-index total return prices & weights to align with dates
     weights = Align(dates, fillforward=True).apply(weights)
@@ -24,19 +20,18 @@ def returns(
     _returns = asset_tr.pct_change().shift(-1)
 
     # Multiply by weights & sum for portfolio returns
-    port = (_returns * weights).sum(axis=1)
+    port = _returns * weights
 
     # Shift returns forward to re-align with correct period
     port = port.shift(1)
 
+    # Sum returns across assets for portfolio return ensuring at least one non-nan value
+    port = port.sum(axis=1, min_count=1)
+
     # Drop leading successive NaNs leaving one
     start_key = port.isna().cumsum().diff().idxmin()
     start_idx = port.index.get_loc(start_key)
-    port = port.iloc[start_idx:].copy()
-
-    # Fill NaNs with Zeros
-    if fillna:
-        port.fillna(0, inplace=True)
+    port = port.iloc[start_idx - 1:].copy()
 
     # Calculate portfolio total return index
     port.iloc[0] = 0

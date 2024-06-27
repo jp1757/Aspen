@@ -4,6 +4,7 @@ Unit tests for backtest logic
 
 import unittest
 import pandas as pd
+import numpy as np
 
 from aspen.signals import ISignals
 from aspen.pcr import IPortConstruct
@@ -83,27 +84,37 @@ class TestPortfolio(unittest.TestCase):
 
     def setUp(self):
         # Load dummy data
-        d1, r1 = tests.utils.returns("B", sdate=pd.Timestamp(year=2010, month=1, day=1))
-        d2, r2 = tests.utils.returns("M", sdate=pd.Timestamp(year=2010, month=1, day=1))
-        d3, r3 = tests.utils.returns("BM", sdate=pd.Timestamp(year=2010, month=1, day=1))
+        self.dD, self.rD = tests.utils.returns(
+            "D", sdate=pd.Timestamp(year=2010, month=1, day=1)
+        )
+        self.dB, self.rB = tests.utils.returns(
+            "B", sdate=pd.Timestamp(year=2010, month=1, day=1)
+        )
+        self.dM, self.rM = tests.utils.returns(
+            "M", sdate=pd.Timestamp(year=2010, month=1, day=1)
+        )
+        self.dBM, self.rBM = tests.utils.returns(
+            "BM", sdate=pd.Timestamp(year=2010, month=1, day=1)
+        )
+        self.dBMoffset, self.rBMoffset = tests.utils.returns(
+            "BM", sdate=pd.Timestamp(year=2010, month=3, day=1), months=6
+        )
 
-        self.d1 = d1
-        self.r1 = r1
-        self.d2 = d2
-        self.r2 = r2
-        self.d3 = d3
-        self.r3 = r3
-
-    def test_monthly(self):
+    @staticmethod
+    def returns(*, returns: pd.DataFrame, weights: pd.DataFrame) -> None:
         """
-        Test calculating portfolio returns from business month-end weights & calendar
-        month-end asset total return data
+        Re-calculate returns using dummy weights and asset total returns data
+        with varying frequency combinations
+
+        :param returns: (pd.DataFrame) asset returns date as index, assets as columns
+        :param weights: (pd.DataFrame) asset weights with date as index, assets as columns
+        :return: None - runs assertion statements
         """
 
         # Prices M
-        tr = (1 + self.r2).cumprod()
+        tr = (1 + returns).cumprod()
         # Weights BM
-        wgts = self.r3.divide(self.r3.sum(axis=1), axis=0).fillna(0)
+        wgts = weights.divide(weights.sum(axis=1), axis=0).fillna(0)
         # Calculate returns with appropriate alignment
         tr_cols = [f"{x}_tr" for x in tr.columns]
         ret_cols = [f"{x}_ret" for x in tr_cols]
@@ -132,13 +143,72 @@ class TestPortfolio(unittest.TestCase):
         p_ret = w * ret
         p_ret = p_ret.shift(1)
         p_ret = p_ret.sum(axis=1, min_count=1)
-        p_ret.index.freq = "BM"
+
+        # Only leave one leading NaN
+        start_idx = 0
+        for x, (index, row) in enumerate(p_ret.items()):
+            if not np.isnan(row):
+                start_idx = x - 1
+                break
+        start_idx = max(start_idx, 0)
+        p_ret = p_ret.iloc[start_idx:].copy()
 
         # Run returns function
         ret_act, tr_act = aspen.backtest.portfolio.returns(
             dates=wgts.index, weights=wgts, asset_tr=tr
         )
 
+        # Hack index frequency
+        p_ret.index.freq = ret_act.index.freq
+
         # Assertion statements
-        pd.testing.assert_series_equal(ret_act, p_ret.iloc[1:])
+        pd.testing.assert_series_equal(ret_act, p_ret)
         pd.testing.assert_series_equal(tr_act, (1 + ret_act.fillna(0)).cumprod())
+
+    def test_monthly(self):
+        """
+        Test calculating portfolio returns from business month-end weights & calendar
+        month-end asset total return data
+        """
+
+        self.returns(returns=self.rM, weights=self.rBM)
+
+    def test_monthly_flip(self):
+        """
+        Test calculating portfolio returns from calendar month-end weights & business
+        month-end asset total return data
+        """
+
+        self.returns(returns=self.rBM, weights=self.rM)
+
+    def test_daily(self):
+        """
+        Test calculating portfolio returns from business day weights & calendar
+        month-end asset total return data
+        """
+
+        self.returns(returns=self.rM, weights=self.rB)
+
+    def test_daily_flip(self):
+        """
+        Test calculating portfolio returns from calendar month-end weights &
+        business day weights asset total return data
+        """
+
+        self.returns(returns=self.rB, weights=self.rM)
+
+    def test_monthly_offset(self):
+        """
+        Test calculating portfolio returns from business month-end weights & calendar
+        month-end asset total return data where periods do not match
+        """
+
+        self.returns(returns=self.rM, weights=self.rBMoffset)
+
+    def test_monthly_offset_flip(self):
+        """
+        Test calculating portfolio returns from calendar month-end weights & business
+        month-end asset total return data where periods do not match
+        """
+
+        self.returns(returns=self.rBMoffset, weights=self.rM)
