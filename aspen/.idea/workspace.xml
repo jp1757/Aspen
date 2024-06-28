@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/aspen/stats/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/backtest/portfolio.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/backtest/portfolio.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_btest.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_btest.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +50,7 @@
     "Python tests.pytest in tests.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "backtest__returns",
+    "git-widget-placeholder": "stats",
     "last_opened_file_path": "C:/Users/james/dev/Research/HASQuant/aspen",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable"
   }
