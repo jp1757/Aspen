@@ -56,11 +56,11 @@ class TestSignal(unittest.TestCase):
         sig = Signal(
             Leaf(
                 Pipeline(TForm("add", other=1), TForm("cumprod")),
-                "tr",
+                "asset_tr",
                 ["returns"]
             ),
             Leaf(Merge("div"), "eps", ["net_income", "shares"]),
-            Leaf(Merge("div"), "pe", ["tr", "eps"]),
+            Leaf(Merge("div"), "pe", ["asset_tr", "eps"]),
             LeafSeries(Pipeline(TForm("rolling", window=3), TForm("mean")), "signal"),
             data=self.data
         )
@@ -81,9 +81,9 @@ class TestSignal(unittest.TestCase):
             Leaf(
                 Pipeline(TForm("rolling", window=3), TForm("mean")),
                 "signal",
-                mappings=["tr", "null"]
+                mappings=["asset_tr", "null"]
             ),
-            data={"tr": (1 + self.data["returns"]).cumprod()}
+            data={"asset_tr": (1 + self.data["returns"]).cumprod()}
         )
 
         with self.assertRaises(Exception) as context:
