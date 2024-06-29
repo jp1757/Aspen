@@ -29,18 +29,27 @@ def cagr(*, tr: pd.Series, periods: int, rolling: int = None) -> Union[float, pd
     :param rolling: (int, optional) use to calculate rolling CAGRs
     :return: either scalar or pd.Series when calculating rolling CAGRs
     """
-
     tr = __check(tr, "cagr")
-
     length = (len(tr) if rolling is None else rolling) - 1
     returns = tr.pct_change(length).dropna().squeeze() + 1
 
     return np.power(returns, (periods / length)) - 1
 
 
-def volatility(*, tr: pd.Series, periods: int):
-    tr = __check(tr, "volatility")
-    return np.std(tr.pct_change()) * np.sqrt(periods)
+def vol(*, tr: pd.Series, periods: int, rolling: int = None) -> Union[float, pd.Series]:
+    """
+    Calculate annualised volatility for an input series
+
+    :param tr:  (pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
+    :param periods:  (int) periods per year i.e. 12 for monthly, 252 for daily etc.
+    :param rolling:  (int, optional) use to calculate rolling volatility
+    :return: either scalar or pd.Series when calculating rolling volatility
+    """
+    tr = __check(tr, "vol")
+    length = (len(tr) if rolling is None else rolling) - 1
+    stds = tr.pct_change().rolling(length).std(ddof=1)
+
+    return (stds * np.sqrt(periods)).dropna().squeeze()
 
 
 def sharpe(*, tr: pd.Series, periods: int, rfr: float = 0.0):
@@ -60,9 +69,9 @@ def sharpe(*, tr: pd.Series, periods: int, rfr: float = 0.0):
     # Get CAGR
     _cagr = cagr(tr=compound, periods=periods)
     # Get vol
-    vol = volatility(tr=compound, periods=periods)
+    _vol = vol(tr=compound, periods=periods)
 
-    return _cagr / vol
+    return _cagr / _vol
 
 
 def deannualize(*, rate: float, periods: int):

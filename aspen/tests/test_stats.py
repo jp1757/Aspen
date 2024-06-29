@@ -36,4 +36,23 @@ class TestStats(unittest.TestCase):
         self.assertEqual(rolling[0], _cagr(tr=tr[0:24], periods=12))
         self.assertEqual(rolling[1], _cagr(tr=tr[1:25], periods=12))
         self.assertEqual(rolling[2], _cagr(tr=tr[2:26], periods=12))
-       
+
+    def test_vol(self):
+        """Test annualised volatility calculation"""
+
+        # Test data
+        tr = (1 + self.rBM.iloc[:, 0]).cumprod()
+
+        # Declare test function
+        def _vol(*, tr: pd.Series, periods: int):
+            return np.std(tr.pct_change(), ddof=1) * np.sqrt(periods)
+
+        # Calculate CAGRs
+        scalar = lib.vol(tr=tr, periods=12)
+        rolling = lib.vol(tr=tr, periods=12, rolling=24)
+
+        # Assertion statements
+        self.assertEqual(scalar, _vol(tr=tr, periods=12))
+        self.assertEqual(rolling[0], _vol(tr=tr[0:24], periods=12))
+        self.assertEqual(rolling[1], _vol(tr=tr[1:25], periods=12))
+        self.assertEqual(rolling[2], _vol(tr=tr[2:26], periods=12))
