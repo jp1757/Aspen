@@ -13,8 +13,9 @@ class Reindex(ITForm):
     ensure no data loss
     """
 
-    def __init__(self, dates: pd.DatetimeIndex):
+    def __init__(self, dates: pd.DatetimeIndex, ffill_trailing: bool = False):
         self.dates = dates
+        self.ffill_trailing = ffill_trailing
 
     def apply(self, data: pd.DataFrame, *other: pd.DataFrame) -> pd.DataFrame:
         """
@@ -29,10 +30,16 @@ class Reindex(ITForm):
         all_dates = pd.date_range(data.index.min(), data.index.max(), freq="D")
 
         # Reindex to all days
-        data = data.reindex(all_dates, method="ffill")
+        _data = data.reindex(all_dates, method="ffill")
 
         # Reindex to dates passed to __init__
-        return data.reindex(self.dates, method="ffill")
+        _data = _data.reindex(self.dates, method="ffill")
+
+        # Remove trailing fill forward data from input
+        if not self.ffill_trailing:
+            _data = _data.loc[:min(self.dates.max(), data.index.max())].copy()
+
+        return _data
 
 
 class Align(ITForm):

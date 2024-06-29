@@ -7,6 +7,7 @@
     <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/aspen/stats/library.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/library.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/tform/library/align.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/tform/library/align.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test_stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_stats.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -38,6 +39,7 @@
     "Python tests.Python tests for test_align.TestReindex.executor": "Run",
     "Python tests.Python tests in tests.executor": "Run",
     "Python tests.Python tests in tform.executor": "Run",
+    "Python tests.pytest for test_align.TestAlign.test_align.executor": "Run",
     "Python tests.pytest for test_btest.TestBTest.test_weights.executor": "Run",
     "Python tests.pytest for test_btest.TestPortfolio.test_daily.executor": "Run",
     "Python tests.pytest for test_btest.TestPortfolio.test_daily_flip.executor": "Run",
@@ -48,7 +50,9 @@
     "Python tests.pytest for test_btest.TestPortfolio.test_monthly_offset.executor": "Run",
     "Python tests.pytest for test_btest.TestPortfolio.test_monthly_offset_flip.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.test_cagr.executor": "Run",
+    "Python tests.pytest for test_stats.TestStats.test_excess.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.test_vol.executor": "Run",
+    "Python tests.pytest in test_align.py.executor": "Run",
     "Python tests.pytest in tests.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -62,38 +66,21 @@
       <recent name="C:\Users\james\dev\Research\HASQuant\aspen\tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.pytest for test_stats.TestStats.test_vol">
-    <configuration name="pytest for test_btest.TestPortfolio.test_drift" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.pytest for test_stats.TestStats.test_cagr">
+    <configuration name="pytest for test_align.TestAlign.test_align" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="aspen" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/tform/library" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_keywords" value="&quot;&quot;" />
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_btest.TestPortfolio.test_drift&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="pytest for test_btest.TestPortfolio.test_drift_weekly" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="aspen" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_btest.TestPortfolio.test_drift_weekly&quot;" />
+      <option name="_new_target" value="&quot;test_align.TestAlign.test_align&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -111,6 +98,23 @@
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_stats.TestStats.test_cagr&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for test_stats.TestStats.test_excess" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="aspen" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_stats.TestStats.test_excess&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -150,11 +154,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.pytest for test_stats.TestStats.test_vol" />
         <item itemvalue="Python tests.pytest for test_stats.TestStats.test_cagr" />
-        <item itemvalue="Python tests.pytest for test_btest.TestPortfolio.test_drift_weekly" />
-        <item itemvalue="Python tests.pytest for test_btest.TestPortfolio.test_drift" />
+        <item itemvalue="Python tests.pytest for test_stats.TestStats.test_vol" />
         <item itemvalue="Python tests.pytest in tests" />
+        <item itemvalue="Python tests.pytest for test_stats.TestStats.test_excess" />
+        <item itemvalue="Python tests.pytest for test_align.TestAlign.test_align" />
       </list>
     </recent_temporary>
   </component>

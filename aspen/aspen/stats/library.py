@@ -8,6 +8,8 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
+from aspen.tform.library.align import Align
+
 
 def __check(tr: pd.Series, func: str):
     if tr.isna().any():
@@ -40,9 +42,9 @@ def vol(*, tr: pd.Series, periods: int, rolling: int = None) -> Union[float, pd.
     """
     Calculate annualised volatility for an input series
 
-    :param tr:  (pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
-    :param periods:  (int) periods per year i.e. 12 for monthly, 252 for daily etc.
-    :param rolling:  (int, optional) use to calculate rolling volatility
+    :param tr: (pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
+    :param periods: (int) periods per year i.e. 12 for monthly, 252 for daily etc.
+    :param rolling: (int, optional) use to calculate rolling volatility
     :return: either scalar or pd.Series when calculating rolling volatility
     """
     tr = __check(tr, "vol")
@@ -72,6 +74,30 @@ def sharpe(*, tr: pd.Series, periods: int, rfr: float = 0.0):
     _vol = vol(tr=compound, periods=periods)
 
     return _cagr / _vol
+
+
+def excess(*, tr: pd.Series, other: Union[float, pd.Series]) -> pd.Series:
+    """
+    Calculate the excess returns above something else.  Can be a fixed rate
+    or another series of returns
+
+    :param tr: (pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
+    :param other: (float or pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
+    :return: pd.Series of excess returns
+    """
+    __check(tr, "excess")
+
+    if isinstance(other, pd.Series):
+        __check(tr, "excess[other]")
+        _other = Align(tr.index).apply(other)
+        other = _other.loc[tr.index.min(): min(tr.index.max(), other.index.max())]
+        other = other.pct_change()
+
+    xs = tr.pct_change() - other
+    xs.iloc[0] = 0
+    xs.dropna(inplace=True)
+    xs.iloc[0] = np.NaN
+    return xs
 
 
 def deannualize(*, rate: float, periods: int):

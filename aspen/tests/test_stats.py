@@ -56,3 +56,23 @@ class TestStats(unittest.TestCase):
         self.assertEqual(rolling[0], _vol(tr=tr[0:24], periods=12))
         self.assertEqual(rolling[1], _vol(tr=tr[1:25], periods=12))
         self.assertEqual(rolling[2], _vol(tr=tr[2:26], periods=12))
+
+    def test_excess(self):
+        """Test calculating excess returns"""
+
+        # Test data
+        aapl = (1 + self.rBM.iloc[:, 0]).cumprod()
+        msft = (1 + self.rBM.iloc[:, 1]).cumprod()
+
+        # Calculate excess manually
+        df = pd.concat([aapl, msft], axis=1).loc[:msft.index.max()]
+        df["msft"] = df.msft.ffill()
+        df = df.dropna(subset="aapl")
+        df_xs = df.iloc[:, 0].pct_change() - df.iloc[:, 1].pct_change()
+
+        # Use excess func
+        xs = lib.excess(tr=aapl, other=msft)
+
+        # Assertion statements
+        pd.testing.assert_index_equal(xs.index, df_xs.index)
+        pd.testing.assert_series_equal(xs, df_xs)
