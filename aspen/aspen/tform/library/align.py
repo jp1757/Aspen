@@ -40,18 +40,34 @@ class Align(ITForm):
     Align multiple dataframes
     """
 
-    def __init__(self, *dates: pd.DatetimeIndex, fillforward: bool = True) -> None:
+    def __init__(
+            self,
+            *dates: pd.DatetimeIndex,
+            fillforward: bool = True,
+            mode: str = "intersect",
+    ) -> None:
         """
         Init object to align
         :param dates: (pd.DatetimeIndex) dates of input dataframes to align
+        :param fillforward: (bool) whether to fill forward or not
+        :param mode: (str) method of combining input DatetimeIndex objects. Use
+            either 'intersect' or 'union'
         """
 
         # Store instance params
         self.index = dates
         self.method = "ffill" if fillforward else None
+        self.mode = mode.lower()
 
         # Build dates
-        self.dates = self.intersect(*dates)
+        if self.mode == "intersect":
+            self.dates = self.intersect(*dates)
+        elif self.mode == "union":
+            self.dates = self.union(*dates)
+        else:
+            raise ValueError(
+                f"Invalid mode [{self.mode}].  Pass one of: ['intersect', 'union']"
+            )
 
     @staticmethod
     def intersect(*dates: pd.DatetimeIndex) -> pd.DatetimeIndex:
@@ -64,6 +80,20 @@ class Align(ITForm):
         _dates = dates[0]
         for d in dates[1:]:
             _dates = _dates.intersection(d)
+
+        return _dates.sort_values()
+
+    @staticmethod
+    def union(*dates: pd.DatetimeIndex) -> pd.DatetimeIndex:
+        """
+        Get union set of all input dates
+        :param dates: (pd.DatetimeIndex) input date indexes
+        :return: (pd.DatetimeIndex) dates
+        """
+
+        _dates = dates[0]
+        for d in dates[1:]:
+            _dates = _dates.union(d)
 
         return _dates.sort_values()
 

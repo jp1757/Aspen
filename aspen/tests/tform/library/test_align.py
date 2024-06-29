@@ -28,14 +28,22 @@ class TestAlign(unittest.TestCase):
         d1, ret1 = utils.returns("B", sdate=pd.Timestamp(year=2010, month=1, day=1))
         d2, ret2 = utils.returns("D", sdate=pd.Timestamp(year=2010, month=5, day=1))
         d3, ret3 = utils.returns("BM", sdate=pd.Timestamp(year=2010, month=1, day=1), months=9)
-        dates = d1.intersection(d2).intersection(d3)
 
-        # Create TForm
+        # Create TForm using default mode = 'intersect'
+        dates = d1.intersection(d2).intersection(d3)
         tf = Align(ret1.index, ret2.index, ret3.index)
-        # Apply
-        dfs = [tf.apply(x) for x in [ret1, ret2, ret3]]
 
         # Assert
-        for df in dfs:
+        for r in [ret1, ret2, ret3]:
+            df = tf.apply(r)
             self.assertEqual(len(df), len(dates))
             self.assertFalse(df.isna().any().any())
+
+        # Create TForm using mode = 'union'
+        dates = d1.union(d2).union(d3)
+        tf = Align(ret1.index, ret2.index, ret3.index, mode="union")
+
+        # Assert
+        for r in [ret1, ret2, ret3]:
+            df = tf.apply(r)
+            self.assertEqual(len(df), len(dates))
