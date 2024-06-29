@@ -3,6 +3,7 @@ Library of portfolio statistics calculations wrapped as
 TForm objects
 """
 import warnings
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -19,9 +20,22 @@ def __check(tr: pd.Series, func: str):
     return tr
 
 
-def cagr(*, tr: pd.Series, periods: int):
+def cagr(*, tr: pd.Series, periods: int, rolling: int = None) -> Union[float, pd.Series]:
+    """
+    Calculate the compounded average growth rate for an input series
+
+    :param tr: (pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
+    :param periods: (int) periods per year i.e. 12 for monthly, 252 for daily etc.
+    :param rolling: (int, optional) use to calculate rolling CAGRs
+    :return: either scalar or pd.Series when calculating rolling CAGRs
+    """
+
     tr = __check(tr, "cagr")
-    return np.power(tr.iloc[-1] / tr.iloc[0], (periods / (len(tr) - 1))) - 1
+
+    length = (len(tr) if rolling is None else rolling) - 1
+    returns = tr.pct_change(length).dropna().squeeze() + 1
+
+    return np.power(returns, (periods / length)) - 1
 
 
 def volatility(*, tr: pd.Series, periods: int):
