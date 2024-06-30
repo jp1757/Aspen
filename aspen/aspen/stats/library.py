@@ -100,5 +100,14 @@ def excess(*, tr: pd.Series, other: Union[float, pd.Series]) -> pd.Series:
     return xs
 
 
-def deannualize(*, rate: float, periods: int):
+def deannualize(*, rate: float, periods: int) -> float:
+    """
+    De-annualize input rate to new frequency. i.e. convert annual risk-free-rate
+    to monthly
+
+    :param rate: (float) input interest rate
+    :param periods: (int) frequency to convert to. Set to 12 for monthly,
+        252 for daily, 52 weekly etc.
+    :return: (float) de-annualized rate
+    """
     return np.power(rate + 1, 1 / periods) - 1
