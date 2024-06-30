@@ -54,24 +54,27 @@ def vol(*, tr: pd.Series, periods: int, rolling: int = None) -> Union[float, pd.
     return (stds * np.sqrt(periods)).dropna().squeeze()
 
 
-def sharpe(*, tr: pd.Series, periods: int, rfr: float = 0.0):
+def sharpe(
+        *, tr: pd.Series, periods: int, rfr: float = 0.0, rolling: int = None,
+) -> Union[float, pd.Series]:
+
     tr = __check(tr, "sharpe")
 
     # Calculate risk-free rate
     if rfr > 0:
         rfr = deannualize(rate=rfr, periods=periods)
 
-    # Calculate returns
-    returns = tr.pct_change()
-    # Calculate excess returns vs rfr
-    excess = returns - rfr
-    excess.iloc[0] = 0
-    # Calculate compounded tr prices from excess
-    compound = (1 + excess).cumprod()
+    # Calculate returns or excess returns if risk-free-rate passed
+    if rfr > 0:
+        xs = excess(tr=tr, other=rfr)
+        xs.iloc[0] = 0
+        tr = (1 + xs).cumprod()
+
     # Get CAGR
-    _cagr = cagr(tr=compound, periods=periods)
+    _cagr = cagr(tr=tr, periods=periods, rolling=rolling)
+
     # Get vol
-    _vol = vol(tr=compound, periods=periods)
+    _vol = vol(tr=tr, periods=periods, rolling=rolling)
 
     return _cagr / _vol
 
