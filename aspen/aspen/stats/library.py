@@ -57,6 +57,16 @@ def vol(*, tr: pd.Series, periods: int, rolling: int = None) -> Union[float, pd.
 def sharpe(
         *, tr: pd.Series, periods: int, rfr: float = 0.0, rolling: int = None,
 ) -> Union[float, pd.Series]:
+    """
+    Calculate Sharpe Ratio
+
+    :param tr: (pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
+    :param periods: (int) periods per year i.e. 12 for monthly, 252 for daily etc.
+    :param rfr: (float, optional) risk-free rate to subtract from returns
+    :param rolling: (int, optional) use to calculate rolling sharpe
+    :return: either scalar or pd.Series when calculating rolling sharpe
+    :return:
+    """
 
     tr = __check(tr, "sharpe")
 
@@ -114,3 +124,31 @@ def deannualize(*, rate: float, periods: int) -> float:
     :return: (float) de-annualized rate
     """
     return np.power(rate + 1, 1 / periods) - 1
+
+
+def drawdown(*, tr: pd.Series, periods: int = None, rfr: float = 0.0) -> pd.Series:
+    """
+    Calculate underwater curve
+
+    :param tr: (pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
+    :param periods: (int, optional) periods per year i.e. 12 for monthly, 252 for daily etc.
+        Must be set if passing rfr, so that rate can be de-annualized
+    :param rfr: (float, optional) risk-free rate to subtract from returns
+    :return: pd.Series of drawdown values
+    """
+    tr = __check(tr, "drawdown")
+
+    # Calculate risk-free rate
+    if rfr > 0:
+        if periods is None:
+            raise ValueError("Please pass a value for periods if rfr set")
+        rfr = deannualize(rate=rfr, periods=periods)
+
+    # Subtract risk-free-rate
+    if rfr > 0:
+        xs = excess(tr=tr, other=rfr)
+        xs.iloc[0] = 0
+        tr = (1 + xs).cumprod()
+
+    # Calculate drawdown
+    return tr / tr.expanding().max() - 1

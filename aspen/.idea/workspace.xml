@@ -48,7 +48,9 @@
     "Python tests.pytest for test_btest.TestPortfolio.test_monthly_flip.executor": "Run",
     "Python tests.pytest for test_btest.TestPortfolio.test_monthly_offset.executor": "Run",
     "Python tests.pytest for test_btest.TestPortfolio.test_monthly_offset_flip.executor": "Run",
+    "Python tests.pytest for test_stats.TestStats.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.test_cagr.executor": "Run",
+    "Python tests.pytest for test_stats.TestStats.test_drawdown.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.test_excess.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.test_sharpe.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.test_vol.executor": "Run",
@@ -66,7 +68,7 @@
       <recent name="C:\Users\james\dev\Research\HASQuant\aspen\tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.pytest for test_stats.TestStats">
+  <component name="RunManager" selected="Python tests.pytest in tests">
     <configuration name="pytest for test_stats.TestStats" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="aspen" />
       <option name="ENV_FILES" value="" />
@@ -101,6 +103,23 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="pytest for test_stats.TestStats.test_drawdown" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="aspen" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_stats.TestStats.test_drawdown&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="pytest for test_stats.TestStats.test_sharpe" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="aspen" />
       <option name="ENV_FILES" value="" />
@@ -115,23 +134,6 @@
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_stats.TestStats.test_sharpe&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="pytest for test_stats.TestStats.test_vol" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="aspen" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_stats.TestStats.test_vol&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -154,11 +156,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.pytest in tests" />
+        <item itemvalue="Python tests.pytest for test_stats.TestStats.test_drawdown" />
         <item itemvalue="Python tests.pytest for test_stats.TestStats" />
         <item itemvalue="Python tests.pytest for test_stats.TestStats.test_sharpe" />
         <item itemvalue="Python tests.pytest for test_stats.TestStats.test_cagr" />
-        <item itemvalue="Python tests.pytest for test_stats.TestStats.test_vol" />
-        <item itemvalue="Python tests.pytest in tests" />
       </list>
     </recent_temporary>
   </component>

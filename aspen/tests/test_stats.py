@@ -109,3 +109,34 @@ class TestStats(unittest.TestCase):
         np.testing.assert_almost_equal(rolling[0], _sharpe(tr=tr[0:24]))
         np.testing.assert_almost_equal(rolling[1], _sharpe(tr=tr[1:25]))
         np.testing.assert_almost_equal(rolling[2], _sharpe(tr=tr[2:26]))
+
+    def test_drawdown(self):
+        """Test drawdown calulcations"""
+
+        # Test data
+        aapl = (1 + self.rBM.iloc[:, 0]).cumprod()
+        msft = (1 + self.rBM.iloc[:, 1]).cumprod()
+
+        ret = msft.pct_change() - aapl.pct_change()
+        ret.iloc[0] = 0
+        tr = (1 + ret).cumprod()
+        tr.name = "tr"
+
+        # Calculate drawdown dataframe
+        rate = 0.01
+        rfr = np.power(rate + 1, 1 / 12) - 1
+        df = pd.concat([tr, pd.Series(tr.expanding().max(), name="max")], axis=1)
+        df["dd"] = df["tr"] / df["max"] - 1
+        df["xs"] = df["tr"].pct_change() - rfr
+        df["xs"].iloc[0] = 0
+        df["xs_tr"] = (1 + df["xs"]).cumprod()
+        df["xs_max"] = df["xs_tr"].expanding().max()
+        df["xs_dd"] = df["xs_tr"] / df["xs_max"] - 1
+
+        # Assertion statements
+        pd.testing.assert_series_equal(
+            lib.drawdown(tr=tr, periods=12), df["dd"], check_names=False
+        )
+        pd.testing.assert_series_equal(
+            lib.drawdown(tr=tr, periods=12, rfr=rate), df["xs_dd"], check_names=False
+        )
