@@ -1,6 +1,5 @@
 """
-Library of portfolio statistics calculations wrapped as
-TForm objects
+Statistics calculations on time series data
 """
 import warnings
 from typing import Union
@@ -9,6 +8,7 @@ import numpy as np
 import pandas as pd
 
 from aspen.tform.library.align import Align
+import aspen.stats.library.scalar
 
 
 def __check(tr: pd.Series, func: str):
@@ -22,7 +22,7 @@ def __check(tr: pd.Series, func: str):
     return tr
 
 
-def cagr(*, tr: pd.Series, periods: int, rolling: int = None) -> Union[float, pd.Series]:
+def cagr(tr: pd.Series, *, periods: int, rolling: int = None) -> Union[float, pd.Series]:
     """
     Calculate the compounded average growth rate for an input series
 
@@ -38,7 +38,7 @@ def cagr(*, tr: pd.Series, periods: int, rolling: int = None) -> Union[float, pd
     return np.power(returns, (periods / length)) - 1
 
 
-def vol(*, tr: pd.Series, periods: int, rolling: int = None) -> Union[float, pd.Series]:
+def vol(tr: pd.Series, *, periods: int, rolling: int = None) -> Union[float, pd.Series]:
     """
     Calculate annualised volatility for an input series
 
@@ -55,7 +55,7 @@ def vol(*, tr: pd.Series, periods: int, rolling: int = None) -> Union[float, pd.
 
 
 def sharpe(
-        *, tr: pd.Series, periods: int, rfr: float = 0.0, rolling: int = None,
+        tr: pd.Series, *, periods: int, rfr: float = 0.0, rolling: int = None,
 ) -> Union[float, pd.Series]:
     """
     Calculate Sharpe Ratio
@@ -72,7 +72,7 @@ def sharpe(
 
     # Calculate risk-free rate
     if rfr > 0:
-        rfr = deannualize(rate=rfr, periods=periods)
+        rfr = aspen.stats.library.scalar.deannualize(rate=rfr, periods=periods)
 
     # Calculate returns or excess returns if risk-free-rate passed
     if rfr > 0:
@@ -89,7 +89,7 @@ def sharpe(
     return _cagr / _vol
 
 
-def excess(*, tr: pd.Series, other: Union[float, pd.Series]) -> pd.Series:
+def excess(tr: pd.Series, *, other: Union[float, pd.Series]) -> pd.Series:
     """
     Calculate the excess returns above something else.  Can be a fixed rate
     or another series of returns
@@ -113,20 +113,7 @@ def excess(*, tr: pd.Series, other: Union[float, pd.Series]) -> pd.Series:
     return xs
 
 
-def deannualize(*, rate: float, periods: int) -> float:
-    """
-    De-annualize input rate to new frequency. i.e. convert annual risk-free-rate
-    to monthly
-
-    :param rate: (float) input interest rate
-    :param periods: (int) frequency to convert to. Set to 12 for monthly,
-        252 for daily, 52 weekly etc.
-    :return: (float) de-annualized rate
-    """
-    return np.power(rate + 1, 1 / periods) - 1
-
-
-def drawdown(*, tr: pd.Series, periods: int = None, rfr: float = 0.0) -> pd.Series:
+def drawdown(tr: pd.Series, *, periods: int = None, rfr: float = 0.0) -> pd.Series:
     """
     Calculate underwater curve
 
@@ -142,7 +129,7 @@ def drawdown(*, tr: pd.Series, periods: int = None, rfr: float = 0.0) -> pd.Seri
     if rfr > 0:
         if periods is None:
             raise ValueError("Please pass a value for periods if rfr set")
-        rfr = deannualize(rate=rfr, periods=periods)
+        rfr = aspen.stats.library.scalar.deannualize(rate=rfr, periods=periods)
 
     # Subtract risk-free-rate
     if rfr > 0:

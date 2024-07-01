@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 import tests.utils
-from aspen.stats import library as lib
+import aspen.stats
 
 
 class TestStats(unittest.TestCase):
@@ -28,8 +28,8 @@ class TestStats(unittest.TestCase):
             return np.power(tr.iloc[-1] / tr.iloc[0], (periods / (len(tr) - 1))) - 1
 
         # Calculate CAGRs
-        scalar = lib.cagr(tr=tr, periods=12)
-        rolling = lib.cagr(tr=tr, periods=12, rolling=24)
+        scalar = tr.cagr(periods=12)
+        rolling = tr.cagr(periods=12, rolling=24)
 
         # Assertion statements
         np.testing.assert_almost_equal(scalar, _cagr(tr=tr, periods=12))
@@ -48,8 +48,8 @@ class TestStats(unittest.TestCase):
             return np.std(tr.pct_change(), ddof=1) * np.sqrt(periods)
 
         # Calculate CAGRs
-        scalar = lib.vol(tr=tr, periods=12)
-        rolling = lib.vol(tr=tr, periods=12, rolling=24)
+        scalar = tr.vol(periods=12)
+        rolling = tr.vol(periods=12, rolling=24)
 
         # Assertion statements
         np.testing.assert_almost_equal(scalar, _vol(tr=tr, periods=12))
@@ -71,7 +71,7 @@ class TestStats(unittest.TestCase):
         df_xs = df.iloc[:, 0].pct_change() - df.iloc[:, 1].pct_change()
 
         # Use excess func
-        xs = lib.excess(tr=aapl, other=msft)
+        xs = aapl.excess(other=msft)
 
         # Assertion statements
         pd.testing.assert_index_equal(xs.index, df_xs.index)
@@ -99,9 +99,9 @@ class TestStats(unittest.TestCase):
         df["xs"].iloc[0] = np.NaN
 
         # Calculate CAGRs
-        sharpe = lib.sharpe(tr=tr, periods=12)
-        sharpe_xs = lib.sharpe(tr=tr, periods=12, rfr=rate)
-        rolling = lib.sharpe(tr=tr, periods=12, rolling=24)
+        sharpe = tr.sharpe(periods=12)
+        sharpe_xs = tr.sharpe(periods=12, rfr=rate)
+        rolling = tr.sharpe(periods=12, rolling=24)
 
         # Assertion statements
         np.testing.assert_almost_equal(sharpe, _sharpe(tr=tr))
@@ -135,8 +135,8 @@ class TestStats(unittest.TestCase):
 
         # Assertion statements
         pd.testing.assert_series_equal(
-            lib.drawdown(tr=tr, periods=12), df["dd"], check_names=False
+            tr.drawdown(periods=12), df["dd"], check_names=False
         )
         pd.testing.assert_series_equal(
-            lib.drawdown(tr=tr, periods=12, rfr=rate), df["xs_dd"], check_names=False
+            tr.drawdown(periods=12, rfr=rate), df["xs_dd"], check_names=False
         )
