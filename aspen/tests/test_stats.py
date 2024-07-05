@@ -5,8 +5,9 @@ import unittest
 import numpy as np
 import pandas as pd
 
-import tests.utils
+import aspen.backtest.portfolio
 import aspen.stats
+import tests.utils
 
 
 class TestStats(unittest.TestCase):
@@ -15,6 +16,9 @@ class TestStats(unittest.TestCase):
         # Load dummy data
         self.dBM, self.rBM = tests.utils.returns(
             "BM", sdate=pd.Timestamp(year=2010, month=1, day=1), months=26
+        )
+        self.dW, self.rW = tests.utils.returns(
+            "W", sdate=pd.Timestamp(year=2010, month=1, day=1)
         )
 
     def test_cagr(self):
@@ -140,3 +144,33 @@ class TestStats(unittest.TestCase):
         pd.testing.assert_series_equal(
             tr.drawdown(periods=12, rfr=rate), df["xs_dd"], check_names=False
         )
+
+    def test_turnover(self):
+        """Test calculating drift turnover"""
+
+        # Test data
+        wgts = self.rBM.div(self.rBM.sum(axis=1), axis=0).dropna()
+        tr = (1 + self.rBM).cumprod()
+
+        # Portfolio object
+        port = aspen.backtest.portfolio.Portfolio(asset_tr=tr, weights=wgts)
+
+        # Calculate drifted weights
+        drift_cols = [f"{x}_d" for x in port.asset_tr.columns]
+        shift_cols = [f"{x}_d+1" for x in port.asset_tr.columns]
+
+        drifted = port.drift(asset_tr=(1 + self.rW).cumprod())
+        drift = drifted.rename(columns=dict(zip(drifted.columns, drift_cols)))
+
+        df = pd.concat([port.weights, drift], axis=1)
+        df[shift_cols] = df[drift_cols].shift(1)
+
+        # Calculate turnover
+        _s = df[shift_cols]
+        _s.columns = port.asset_tr.columns
+        diff = df[port.asset_tr.columns] - _s
+        diff = diff.dropna().abs()
+        turnover = diff.sum().sum() / (len(wgts) / 12)
+
+        # Assertion statements
+        np.testing.assert_almost_equal(wgts.turnover(periods=12, drifted=drifted), turnover)

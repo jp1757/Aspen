@@ -139,3 +139,29 @@ def drawdown(tr: pd.Series, *, periods: int = None, rfr: float = 0.0) -> pd.Seri
 
     # Calculate drawdown
     return tr / tr.expanding().max() - 1
+
+
+def turnover(weights: pd.DataFrame, *, periods: int, drifted: pd.DataFrame = None) -> float:
+    """
+    Calculate the total two-sided turnover average per year.  Buys + sells.
+
+    :param weights: (pd.DataFrame) portfolio weights indexed by date, with assets as columns
+    :param periods: (int, optional) periods per year i.e. 12 for monthly, 252 for daily etc.
+    :param drifted: (pd.DataFrame, optional) calculate turnover using drifted weights taking
+        into consideration the drift between rebalance dates.
+    :return: float average annual turnover
+    """
+
+    if drifted is not None:
+        dates_diff = set(weights.index) - set(drifted.index)
+        if len(dates_diff) > 0:
+            raise ValueError(
+                f"Dates found in weights dataframe not present in drifted "
+                f"weights: {dates_diff}"
+            )
+        diff = drifted.diff().loc[weights.index].copy()
+    else:
+        diff = weights.diff()
+
+    total_turn = diff.abs().sum().sum()
+    return total_turn / (len(weights) / periods)

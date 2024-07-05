@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/aspen/stats/library/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aspen/stats/library/scalar.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/stats/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/stats/library.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/library/ts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/stats/library/ts.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/library/ts.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test_stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_stats.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -56,6 +53,7 @@
     "Python tests.pytest for test_stats.TestStats.test_drawdown.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.test_excess.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.test_sharpe.executor": "Run",
+    "Python tests.pytest for test_stats.TestStats.test_turnover.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.test_vol.executor": "Run",
     "Python tests.pytest in test_align.py.executor": "Run",
     "Python tests.pytest in test_stats.py.executor": "Run",
@@ -73,7 +71,7 @@
       <recent name="C:\Users\james\dev\Research\HASQuant\aspen\tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.pytest in tests">
+  <component name="RunManager" selected="Python tests.pytest for test_stats.TestStats">
     <configuration name="pytest for test_stats.TestStats" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="aspen" />
       <option name="ENV_FILES" value="" />
@@ -108,7 +106,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="pytest for test_stats.TestStats.test_drawdown" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+    <configuration name="pytest for test_stats.TestStats.test_turnover" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="aspen" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -121,7 +119,7 @@
       <option name="_new_keywords" value="&quot;&quot;" />
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_stats.TestStats.test_drawdown&quot;" />
+      <option name="_new_target" value="&quot;test_stats.TestStats.test_turnover&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -161,11 +159,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.pytest for test_stats.TestStats" />
+        <item itemvalue="Python tests.pytest for test_stats.TestStats.test_turnover" />
         <item itemvalue="Python tests.pytest in tests" />
         <item itemvalue="Python tests.pytest in test_stats.py" />
         <item itemvalue="Python tests.pytest for test_stats.TestStats.test_cagr" />
-        <item itemvalue="Python tests.pytest for test_stats.TestStats.test_drawdown" />
-        <item itemvalue="Python tests.pytest for test_stats.TestStats" />
       </list>
     </recent_temporary>
   </component>
