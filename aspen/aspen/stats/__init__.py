@@ -1,6 +1,6 @@
 """Package for calculating performance statistics, charting etc"""
 
-from aspen.stats.library import ts
+from aspen.stats.library import portfolio
 
 # Extend pandas objects, tying stats time series functions so that they
 # are accessible as easily as pandas.Series.cagr(periods=12) etc
