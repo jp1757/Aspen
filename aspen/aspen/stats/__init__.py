@@ -8,6 +8,6 @@ from pandas.core.base import PandasObject
 from inspect import getmembers, isfunction
 
 # Loop through all functions in timeseries module
-for name, func in getmembers(ts, isfunction):
+for name, func in getmembers(portfolio, isfunction):
     if not name.startswith("__"):  # Function is not name mangled (aka private)
         setattr(PandasObject, name, func)
