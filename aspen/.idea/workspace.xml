@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/aspen/stats/report.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/aspen/stats/library/ts.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/library/ts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_stats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

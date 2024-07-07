@@ -22,6 +22,41 @@ def __check(tr: pd.Series, func: str):
     return tr
 
 
+def tr(tr: pd.Series) -> pd.Series:
+    """
+    Calculate the compound total return
+
+    :param tr: (pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
+    :return: pd.Series of compounded total returns
+    """
+    _tr = __check(tr, "tr")
+    ret = _tr.pct_change()
+    ret.iloc[0] = 0
+
+    return (1 + ret).cumprod() - 1
+
+
+def year_return(tr: pd.Series, *, years: int, periods: int) -> float:
+    """
+    Calculate a return for the last x years
+
+    :param tr: (pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
+    :param years: (int) period to calculate return over
+    :param periods: (int) periods per year i.e. 12 for monthly, 252 for daily etc.
+    :return: (float) return over last x years
+    """
+    tr = __check(tr, "ret")
+
+    start_idx = years * periods + 1
+    if start_idx > len(tr):
+        warnings.warn(
+            f"stats.ret: Doesn't have [{years}] years worth of data"
+        )
+        start_idx = len(tr)
+
+    return tr.iloc[-1] / tr[-start_idx] - 1
+
+
 def cagr(tr: pd.Series, *, periods: int, rolling: int = None) -> Union[float, pd.Series]:
     """
     Calculate the compounded average growth rate for an input series
