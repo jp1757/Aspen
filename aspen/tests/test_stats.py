@@ -189,15 +189,19 @@ class TestSignal(unittest.TestCase):
         )
         self.aapl = (1 + self.rBM.aapl).cumprod()
 
-        # Calculate dummy zscore signal
-        m = self.aapl.rolling(3).mean()
-        sd = self.aapl.rolling(3).std()
-        self.zscore = ((self.aapl - m) / sd).dropna()
+    @staticmethod
+    def zscore(tr: pd.Series, rolling: int) -> pd.Series:
+        """Calculate zscore"""
+        m = tr.rolling(rolling).mean()
+        sd = tr.rolling(rolling).std()
+        return ((tr - m) / sd).dropna()
 
     def test_ic(self):
         """Test information coefficient function"""
 
-        df = pd.concat([self.aapl, pd.Series(self.zscore, name="signal")], axis=1)
+        zsc = self.zscore(self.aapl, 3)
+
+        df = pd.concat([self.aapl, pd.Series(zsc, name="signal")], axis=1)
         df["ret"] = df["aapl"].pct_change()
         df["ret_3"] = df["aapl"].pct_change(3)
         df["ret+1"] = df["ret"].shift(-1)
@@ -220,10 +224,10 @@ class TestSignal(unittest.TestCase):
 
         # Run functions to test
         ic_1, rolling_1 = aspen.stats.library.signal.ic(
-            self.aapl, signal=self.zscore, lag=1, rolling=5
+            self.aapl, signal=zsc, lag=1, rolling=5
         )
         ic_3, rolling_3 = aspen.stats.library.signal.ic(
-            self.aapl, signal=self.zscore, lag=3, rolling=5
+            self.aapl, signal=zsc, lag=3, rolling=5
         )
 
         # Assertion statements
@@ -239,4 +243,57 @@ class TestSignal(unittest.TestCase):
             df[["signal", "ret+3"]].rolling(5).corr().dropna().iloc[:, 1].loc[:, "signal"],
             rolling_3,
             check_names=False
+        )
+
+    def test_ic_xsect(self):
+        """Test cross-sectionally information coefficient function"""
+
+        tr = (1 + self.rBM).cumprod()
+        signals = pd.concat([self.zscore(col, 5) for idx, col in tr.items()], axis=1)
+
+        tr_cols = list(tr.columns)
+        ret_cols = [f"{x}_ret_3" for x in tr_cols]
+        ret3_cols = [f"{x}_ret+3" for x in tr_cols]
+        sig_cols = [f"{x}_sig" for x in tr_cols]
+
+        signal = signals.rename(columns=dict(zip(tr_cols, sig_cols)))
+        df = pd.concat([tr, signal], axis=1)
+        df[ret_cols] = df[tr_cols].pct_change(periods=3)
+        df[ret3_cols] = df[ret_cols].shift(-3)
+        df.dropna(subset=sig_cols, inplace=True, how="all")
+        df.dropna(subset=ret3_cols, inplace=True, how="all")
+        df = df[sig_cols + ret3_cols]
+
+        def _series(rank):
+            indexes = []
+            values = []
+
+            for index, row in df.iterrows():
+                a = row.loc[sig_cols]
+                a.index = [x.replace("_sig", "") for x in a.index]
+                if rank:
+                    a = a.rank()
+
+                b = row.loc[ret3_cols]
+                b.index = [x.replace("_ret+3", "") for x in b.index]
+
+                indexes.append(index)
+                values.append(a.corr(b))
+
+            return pd.Series(data=values, index=indexes)
+
+        # Calculate cross-sectional correlation
+        xsect = aspen.stats.library.signal.ic_xsect(
+            tr, signal=signals, lag=3
+        )  # , rank="basic")
+        xsect_rank = aspen.stats.library.signal.ic_xsect(
+            tr, signal=signals, lag=3, rank="basic"
+        )
+
+        # Assertion statements
+        pd.testing.assert_series_equal(
+            _series(False), xsect, check_names=False, check_freq=False
+        )
+        pd.testing.assert_series_equal(
+            _series(True), xsect_rank, check_names=False, check_freq=False
         )
