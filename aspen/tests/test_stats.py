@@ -7,10 +7,11 @@ import pandas as pd
 
 import aspen.backtest.portfolio
 import aspen.stats
+import aspen.stats.library.signal
 import tests.utils
 
 
-class TestStats(unittest.TestCase):
+class TestPortfolio(unittest.TestCase):
 
     def setUp(self):
         # Load dummy data
@@ -174,3 +175,68 @@ class TestStats(unittest.TestCase):
 
         # Assertion statements
         np.testing.assert_almost_equal(wgts.turnover(periods=12, drifted=drifted), turnover)
+
+
+class TestSignal(unittest.TestCase):
+
+    def setUp(self):
+        # Load dummy data
+        self.dBM, self.rBM = tests.utils.returns(
+            "BM", sdate=pd.Timestamp(year=2010, month=1, day=1), months=26
+        )
+        self.dW, self.rW = tests.utils.returns(
+            "W", sdate=pd.Timestamp(year=2010, month=1, day=1)
+        )
+        self.aapl = (1 + self.rBM.aapl).cumprod()
+
+        # Calculate dummy zscore signal
+        m = self.aapl.rolling(3).mean()
+        sd = self.aapl.rolling(3).std()
+        self.zscore = ((self.aapl - m) / sd).dropna()
+
+    def test_ic(self):
+        """Test information coefficient function"""
+
+        df = pd.concat([self.aapl, pd.Series(self.zscore, name="signal")], axis=1)
+        df["ret"] = df["aapl"].pct_change()
+        df["ret_3"] = df["aapl"].pct_change(3)
+        df["ret+1"] = df["ret"].shift(-1)
+        df["ret+3"] = df["ret_3"].shift(-3)
+
+        np.testing.assert_almost_equal(
+            df.iloc[1:5, 0].iloc[-1] / df.iloc[1:5, 0].iloc[0] - 1,
+            df.iloc[len(df.iloc[1:5, 0]), 3]
+        )
+
+        sig_start = df["signal"].dropna().index[0]
+        shift_3 = df.loc[sig_start:].iloc[0: 4]
+        np.testing.assert_almost_equal(
+            shift_3.iloc[:, 0][-1] / shift_3.iloc[:, 0][0] - 1,
+            df["ret+3"].loc[sig_start]
+        )
+
+        df.dropna(subset=["signal"], inplace=True)
+        corr = df.corr()
+
+        # Run functions to test
+        ic_1, rolling_1 = aspen.stats.library.signal.ic(
+            self.aapl, signal=self.zscore, lag=1, rolling=5
+        )
+        ic_3, rolling_3 = aspen.stats.library.signal.ic(
+            self.aapl, signal=self.zscore, lag=3, rolling=5
+        )
+
+        # Assertion statements
+        np.testing.assert_almost_equal(corr["signal"].loc["ret+1"], ic_1)
+        np.testing.assert_almost_equal(corr["signal"].loc["ret+3"], ic_3)
+
+        pd.testing.assert_series_equal(
+            df[["signal", "ret+1"]].rolling(5).corr().dropna().iloc[:, 1].loc[:, "signal"],
+            rolling_1,
+            check_names=False
+        )
+        pd.testing.assert_series_equal(
+            df[["signal", "ret+3"]].rolling(5).corr().dropna().iloc[:, 1].loc[:, "signal"],
+            rolling_3,
+            check_names=False
+        )
