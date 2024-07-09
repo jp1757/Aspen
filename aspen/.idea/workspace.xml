@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/aspen/tform/library/rank.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/tform/library/test_rank.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/stats/library/signal.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/library/signal.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_stats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +49,8 @@
     "Python tests.pytest for test_btest.TestPortfolio.test_monthly_flip.executor": "Run",
     "Python tests.pytest for test_btest.TestPortfolio.test_monthly_offset.executor": "Run",
     "Python tests.pytest for test_btest.TestPortfolio.test_monthly_offset_flip.executor": "Run",
+    "Python tests.pytest for test_rank.TestRank.test_qcut_zsect.executor": "Run",
+    "Python tests.pytest for test_rank.TestRank.test_rank_xsect.executor": "Run",
     "Python tests.pytest for test_stats.TestSignal.test_ic.executor": "Run",
     "Python tests.pytest for test_stats.TestSignal.test_ic_xsect.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.executor": "Run",
@@ -74,6 +77,40 @@
     </key>
   </component>
   <component name="RunManager" selected="Python tests.pytest in tests">
+    <configuration name="pytest for test_rank.TestRank.test_qcut_zsect" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="aspen" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/tform/library" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_rank.TestRank.test_qcut_zsect&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for test_rank.TestRank.test_rank_xsect" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="aspen" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/tform/library" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_rank.TestRank.test_rank_xsect&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="pytest for test_stats.TestSignal.test_ic" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="aspen" />
       <option name="ENV_FILES" value="" />
@@ -108,40 +145,6 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="pytest for test_stats.TestStats" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="aspen" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_stats.TestStats&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="pytest for test_stats.TestStats.test_turnover" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="aspen" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_stats.TestStats.test_turnover&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <configuration name="pytest in tests" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="aspen" />
       <option name="ENV_FILES" value="" />
@@ -162,10 +165,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python tests.pytest in tests" />
+        <item itemvalue="Python tests.pytest for test_rank.TestRank.test_qcut_zsect" />
+        <item itemvalue="Python tests.pytest for test_rank.TestRank.test_rank_xsect" />
         <item itemvalue="Python tests.pytest for test_stats.TestSignal.test_ic_xsect" />
         <item itemvalue="Python tests.pytest for test_stats.TestSignal.test_ic" />
-        <item itemvalue="Python tests.pytest for test_stats.TestStats" />
-        <item itemvalue="Python tests.pytest for test_stats.TestStats.test_turnover" />
       </list>
     </recent_temporary>
   </component>
