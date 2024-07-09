@@ -4,10 +4,11 @@ Test ranking transformations
 
 import unittest
 from typing import Union
+
 import pandas as pd
 
-import tests.utils as utils
 import aspen.tform.library.rank
+import tests.utils as utils
 
 
 class TestRank(unittest.TestCase):
@@ -32,7 +33,8 @@ class TestRank(unittest.TestCase):
         """Test cross-sectional rank using RankXSect tform"""
 
         # Run rank tform
-        ranks = aspen.tform.library.rank.RankXSect(ascending=True, pct=False).apply(self.zsc)
+        ranks = aspen.tform.library.rank.RankXSect(ascending=True, pct=False).apply(
+            self.zsc)
         pct = aspen.tform.library.rank.RankXSect(pct=True).apply(self.zsc)
 
         # Assertion statements
