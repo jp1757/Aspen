@@ -12,6 +12,12 @@ class ISignal(metaclass=abc.ABCMeta):
     Core Individual Signal Interface
     """
 
+    @property
+    @abc.abstractmethod
+    def name(self) -> str:
+        """Unique signal id"""
+        pass
+
     @abc.abstractmethod
     def calculate(self) -> pd.DataFrame:
         """
