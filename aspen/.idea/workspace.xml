@@ -5,15 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/aspen/pcr/library/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aspen/pcr/library/quintile.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aspen/signals/library/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aspen/signals/library/normalise.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_pcr.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/backtest/generic.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/backtest/generic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/signals/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/signals/core.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/tform/library/rank.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/tform/library/rank.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_btest.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_btest.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,43 +31,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python tests.Python tests for test_align.TestAlign.test_align.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_align.TestReindex.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in tests.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in tform.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_align.TestAlign.test_align.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_btest.TestBTest.test_weights.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_btest.TestPortfolio.test_daily.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_btest.TestPortfolio.test_daily_flip.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_btest.TestPortfolio.test_drift.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_btest.TestPortfolio.test_drift_weekly.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_btest.TestPortfolio.test_monthly.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_btest.TestPortfolio.test_monthly_flip.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_btest.TestPortfolio.test_monthly_offset.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_btest.TestPortfolio.test_monthly_offset_flip.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_rank.TestRank.test_qcut_zsect.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_rank.TestRank.test_rank_xsect.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_stats.TestSignal.test_ic.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_stats.TestSignal.test_ic_xsect.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_stats.TestStats.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_stats.TestStats.test_cagr.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_stats.TestStats.test_drawdown.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_stats.TestStats.test_excess.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_stats.TestStats.test_sharpe.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_stats.TestStats.test_turnover.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test_stats.TestStats.test_vol.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest in test_align.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest in test_stats.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest in tests.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;stats__signal&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/james/dev/quantstats&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.XML&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python tests.Python tests for test_align.TestAlign.test_align.executor": "Run",
+    "Python tests.Python tests for test_align.TestReindex.executor": "Run",
+    "Python tests.Python tests in tests.executor": "Run",
+    "Python tests.Python tests in tform.executor": "Run",
+    "Python tests.pytest for test_align.TestAlign.test_align.executor": "Run",
+    "Python tests.pytest for test_btest.TestBTest.test_weights.executor": "Run",
+    "Python tests.pytest for test_btest.TestPortfolio.test_daily.executor": "Run",
+    "Python tests.pytest for test_btest.TestPortfolio.test_daily_flip.executor": "Run",
+    "Python tests.pytest for test_btest.TestPortfolio.test_drift.executor": "Run",
+    "Python tests.pytest for test_btest.TestPortfolio.test_drift_weekly.executor": "Run",
+    "Python tests.pytest for test_btest.TestPortfolio.test_monthly.executor": "Run",
+    "Python tests.pytest for test_btest.TestPortfolio.test_monthly_flip.executor": "Run",
+    "Python tests.pytest for test_btest.TestPortfolio.test_monthly_offset.executor": "Run",
+    "Python tests.pytest for test_btest.TestPortfolio.test_monthly_offset_flip.executor": "Run",
+    "Python tests.pytest for test_pcr.TestLibrary.test_quantile_ew.executor": "Run",
+    "Python tests.pytest for test_rank.TestRank.test_qcut_zsect.executor": "Run",
+    "Python tests.pytest for test_rank.TestRank.test_rank_xsect.executor": "Run",
+    "Python tests.pytest for test_stats.TestSignal.test_ic.executor": "Run",
+    "Python tests.pytest for test_stats.TestSignal.test_ic_xsect.executor": "Run",
+    "Python tests.pytest for test_stats.TestStats.executor": "Run",
+    "Python tests.pytest for test_stats.TestStats.test_cagr.executor": "Run",
+    "Python tests.pytest for test_stats.TestStats.test_drawdown.executor": "Run",
+    "Python tests.pytest for test_stats.TestStats.test_excess.executor": "Run",
+    "Python tests.pytest for test_stats.TestStats.test_sharpe.executor": "Run",
+    "Python tests.pytest for test_stats.TestStats.test_turnover.executor": "Run",
+    "Python tests.pytest for test_stats.TestStats.test_vol.executor": "Run",
+    "Python tests.pytest in test_align.py.executor": "Run",
+    "Python tests.pytest in test_stats.py.executor": "Run",
+    "Python tests.pytest in tests.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "stats__signal",
+    "last_opened_file_path": "C:/Users/james/dev/quantstats",
+    "settings.editor.selected.configurable": "preferences.sourceCode.XML"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\james\dev\Research\HASQuant\aspen\aspen\stats\library" />
@@ -82,6 +76,23 @@
     </key>
   </component>
   <component name="RunManager" selected="Python tests.pytest in tests">
+    <configuration name="pytest for test_pcr.TestLibrary.test_quantile_ew" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="aspen" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_pcr.TestLibrary.test_quantile_ew&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="pytest for test_rank.TestRank.test_qcut_zsect" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="aspen" />
       <option name="ENV_FILES" value="" />
@@ -113,23 +124,6 @@
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_rank.TestRank.test_rank_xsect&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="pytest for test_stats.TestSignal.test_ic" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="aspen" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_stats.TestSignal.test_ic&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -170,10 +164,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python tests.pytest in tests" />
+        <item itemvalue="Python tests.pytest for test_pcr.TestLibrary.test_quantile_ew" />
         <item itemvalue="Python tests.pytest for test_rank.TestRank.test_qcut_zsect" />
         <item itemvalue="Python tests.pytest for test_rank.TestRank.test_rank_xsect" />
         <item itemvalue="Python tests.pytest for test_stats.TestSignal.test_ic_xsect" />
-        <item itemvalue="Python tests.pytest for test_stats.TestSignal.test_ic" />
       </list>
     </recent_temporary>
   </component>
