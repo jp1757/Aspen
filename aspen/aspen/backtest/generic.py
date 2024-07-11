@@ -5,7 +5,7 @@ from typing import List
 import pandas as pd
 
 from aspen.backtest.core import IBTest
-from aspen.signals.core import ISignals
+from aspen.signals.core import ISignals, INormalise
 from aspen.pcr.core import IPortConstruct
 
 from aspen.tform.library.align import Reindex
@@ -24,8 +24,8 @@ class BTest(IBTest):
             tr: pd.DataFrame,
             signals: ISignals,
             pcr: IPortConstruct,
-            normalise: bool = True,
-    ):
+            normalise: INormalise = None,
+    ) -> None:
         # Store instance vars
         self.dates = dates
         self.signals = signals
@@ -42,7 +42,11 @@ class BTest(IBTest):
         """
 
         # Calculate signal data
-        signals = self.signals.combine(self.normalise)
+        signals = self.signals.combine()
+
+        # Normalise
+        if self.normalise is not None:
+            signals = self.normalise.norm(signals)
 
         weights = [
             self.pcr.weights(

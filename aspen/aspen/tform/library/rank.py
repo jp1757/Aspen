@@ -13,7 +13,7 @@ class RankXSect(ITForm):
     the highest values getting the lowest ranks (by default)
     """
 
-    def __init__(self, *, pct: bool = True, ascending: bool = False, **kwargs):
+    def __init__(self, *, pct: bool = True, ascending: bool = False, **kwargs) -> None:
         """
         Init object
         :param pct: (bool, optional) use percentile ranks or ordered numerical
@@ -43,7 +43,12 @@ class QCutXSect(ITForm):
     Split data cross-sectionally into bins using the pandas.qcut function
     """
 
-    def __init__(self, bins: int, **kwargs):
+    def __init__(self, bins: int, **kwargs) -> None:
+        """
+        Init qcut TForm
+        :param bins: (int) number of bins to map values into
+        :param kwargs: (optional) key word args to pass to pandas.qcut function
+        """
         self.bins = bins
         self.kwargs = kwargs
 

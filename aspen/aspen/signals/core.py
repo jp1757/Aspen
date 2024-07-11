@@ -28,10 +28,9 @@ class ISignals(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def combine(self, normalise: bool) -> pd.DataFrame:
+    def combine(self) -> pd.DataFrame:
         """
         Combine multiple signals
-        :param normalise: (bool) whether to normalise signal values before combining
         :return: pd.DataFrame
         """
         pass
@@ -43,8 +42,9 @@ class INormalise(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def norm(self) -> pd.DataFrame:
+    def norm(self, data: pd.DataFrame) -> pd.DataFrame:
         """
         Normalise signal data
+        :param data: (pd.DataFrame) signal data to normalise
         :return: (pd.DataFrame) normalised signal data
         """

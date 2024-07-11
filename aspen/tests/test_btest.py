@@ -22,7 +22,7 @@ class Signals(ISignals):
         self.data = data
         self.data.dropna(how="all", inplace=True)
 
-    def combine(self, normalise: bool) -> pd.DataFrame:
+    def combine(self) -> pd.DataFrame:
         return self.data
 
 
