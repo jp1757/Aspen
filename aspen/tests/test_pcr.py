@@ -38,4 +38,3 @@ class TestLibrary(unittest.TestCase):
         np.testing.assert_almost_equal(wgts.loc["tsla"], 0.0)
         np.testing.assert_almost_equal(wgts.loc["msft"], 0.333, decimal=3)
         np.testing.assert_almost_equal(wgts.loc["meta"], -0.5)
-        

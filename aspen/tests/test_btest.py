@@ -22,7 +22,15 @@ class Signals(ISignals):
         self.data = data
         self.data.dropna(how="all", inplace=True)
 
-    def combine(self) -> pd.DataFrame:
+    def build(self, name: str = None) -> pd.DataFrame:
+        """
+        Serve up signal data by either combining multiple signals or
+        returning a specific signal by setting the 'name' parameter
+
+        :param name: (str, optional) name of signal to return
+        :return: pd.DataFrame of signal data indexed by date with columns set
+            to asset ids
+        """
         return self.data
 
 

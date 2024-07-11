@@ -28,10 +28,14 @@ class ISignals(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def combine(self) -> pd.DataFrame:
+    def build(self, name: str = None) -> pd.DataFrame:
         """
-        Combine multiple signals
-        :return: pd.DataFrame
+        Serve up signal data by either combining multiple signals or
+        returning a specific signal by setting the 'name' parameter
+
+        :param name: (str, optional) name of signal to return
+        :return: pd.DataFrame of signal data indexed by date with columns set
+            to asset ids
         """
         pass
 

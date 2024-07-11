@@ -25,12 +25,14 @@ class BTest(IBTest):
             signals: ISignals,
             pcr: IPortConstruct,
             normalise: INormalise = None,
+            signal: str = None,
     ) -> None:
         # Store instance vars
         self.dates = dates
         self.signals = signals
         self.pcr = pcr
         self.normalise = normalise
+        self.signal = signal
 
         # Align total return data to input dates
         self.tr = Reindex(dates).apply(tr)
@@ -42,7 +44,7 @@ class BTest(IBTest):
         """
 
         # Calculate signal data
-        signals = self.signals.combine()
+        signals = self.signals.build(name=self.signal)
 
         # Normalise
         if self.normalise is not None:
