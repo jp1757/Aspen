@@ -7,7 +7,7 @@
     <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/aspen/signals/generic.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/signals/generic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/signals/library/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/signals/library/signals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/stats/report.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/report.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -36,6 +36,23 @@ class Signal(ISignal):
         return signal
 
 
+class SignalDF(ISignal):
+    """
+    Basic signal object that holds signal data already derived & stored in a dataframe
+    """
+
+    def __init__(self, name: str, data: pd.DataFrame) -> None:
+        self._name = name
+        self._data = data
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    def calculate(self) -> pd.DataFrame:
+        return self._data
+
+
 class Signals(ISignals):
     """
     Stores multiple signal objects but does *not* combine them.

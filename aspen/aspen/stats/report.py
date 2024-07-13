@@ -89,7 +89,7 @@ def portfolio(
     return snap
 
 
-def combined(
+def portfolios(
         *tr: pd.Series, periods: int, bps: bool = False, dateformat: str = "%Y-%m-%d"
 ) -> pd.DataFrame:
     """
@@ -130,7 +130,7 @@ def snapshot(
     :param dateformat: (str, optional) string format to represent dates
     :return: None
     """
-    df = combined(*tr, periods=periods, bps=bps, dateformat=dateformat)
+    df = portfolios(*tr, periods=periods, bps=bps, dateformat=dateformat)
 
     fig = plt.figure(figsize=(14, 8))
 
