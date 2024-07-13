@@ -35,3 +35,10 @@ def returns(
     _returns.iloc[0] = 0
 
     return dates, _returns
+
+
+def zsc(tr: pd.Series, rolling: int) -> pd.Series:
+    """Calculates a rolling z-score for testing"""
+    m = tr.rolling(rolling).mean()
+    sd = tr.rolling(rolling).std()
+    return ((tr - m) / sd).dropna()

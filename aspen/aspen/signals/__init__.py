@@ -1,5 +1,5 @@
 """
-Signals package that sets out a structure for defining,
+SignalsDummy package that sets out a structure for defining,
 normalising & combining signal objects
 """
 

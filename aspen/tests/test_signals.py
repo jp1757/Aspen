@@ -1,4 +1,4 @@
-"""Unit tests for Signals Package"""
+"""Unit tests for SignalsDummy Package"""
 
 import os
 import sys

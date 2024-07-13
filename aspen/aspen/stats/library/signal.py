@@ -99,7 +99,3 @@ def tstat(scores: pd.Series) -> float:
     :return: (float) T-Stat value
     """
     return scores.mean() / scores.std() * np.sqrt(len(scores))
-
-
-def quintiles():
-    pass

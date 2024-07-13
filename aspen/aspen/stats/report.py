@@ -122,7 +122,7 @@ def snapshot(
     Plot a snapshot of portfolio statistics including a summary table and 4 plots:
     total return, rolling sharpe, drawdown, rolling volatility
 
-    :param tr: (pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
+    :param tr: (pd.Series) portfolio total return price series i.e [1.0, 1.01, 0.98...]
     :param periods: (int) periods per year i.e. 12 for monthly, 252 for daily etc.
     :param rolling: (int) rolling period for sharpe and volatility plots
     :param bps: (bool, optional) whether to represent values in basis points (True)
