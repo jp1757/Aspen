@@ -48,19 +48,41 @@ class Portfolio(object):
     & converts to a set of historical portfolio returns
     """
 
-    def __init__(self, asset_tr: pd.DataFrame, weights: pd.DataFrame) -> None:
+    def __init__(
+            self, name: str, *, asset_tr: pd.DataFrame, weights: pd.DataFrame
+    ) -> None:
+        """
+        Init portfolio object, calculate returns & the total return index
+
+        :param name: (str) portfolio name
+        :param asset_tr: (pd.DataFrame) asset total return prices i.e [1.0, 1.01, 0.98...]
+            Column names should be set to assets, dates as index. Assets should match
+            those found in weights dataframe
+        :param weights: (pd.DataFrame) asset weights to calculate returns over. Index
+            set to dates & columns set to equivelent asset names in asset_tr dataframe
+        """
+
+        self._name = name
+
         # Check assets appear in total returns dataframe
         asset_diff = set(weights.columns) - set(asset_tr.columns)
         if len(asset_diff) > 0:
             raise ValueError(f"No returns data for: [{asset_diff}]")
 
         self.__wgts = weights.copy()
+        self.__wgts.name = name
         self.asset_tr = asset_tr[self.weights.columns].copy()
 
         # Calculate returns
         self.__ret, self.__tr = returns(
             dates=weights.index, weights=weights, asset_tr=asset_tr
         )
+        self.__ret.name = name
+        self.__tr.name = name
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def weights(self) -> pd.DataFrame:
@@ -129,5 +151,6 @@ class Portfolio(object):
         drift = drift.dropna(how="all").sort_index()
         # Set index name
         drift.index.name = self.weights.index.name
+        drift.name = self.name
 
         return drift

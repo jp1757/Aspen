@@ -5,14 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/aspen/stats/report/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/aspen/stats/report/signal.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/signals/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/signals/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/signals/leaf.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/signals/leaf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/backtest/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/backtest/core.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/backtest/generic.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/backtest/generic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/backtest/portfolio.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/backtest/portfolio.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/aspen/stats/library/signal.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/library/signal.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/stats/report.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/report.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/stats/report.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/report/portfolio.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test_btest.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_btest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_stats.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,12 +77,16 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "stats__signal",
-    "last_opened_file_path": "C:/Users/james/dev/quantstats",
+    "last_opened_file_path": "C:/Users/james/dev/Research/HASQuant/aspen/aspen/stats/report",
     "settings.editor.selected.configurable": "preferences.sourceCode.XML"
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\james\dev\Research\HASQuant\aspen\aspen\stats\report" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\james\dev\Research\HASQuant\aspen\aspen\stats\report" />
       <recent name="C:\Users\james\dev\Research\HASQuant\aspen\aspen\stats\library" />
       <recent name="C:\Users\james\dev\Research\HASQuant\aspen\tests" />
     </key>

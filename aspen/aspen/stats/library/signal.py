@@ -75,7 +75,7 @@ def ic_xsect(
         i.e. if monthly tr data, 1 means 1 month forward return, 3 means 1 quarter
         forward return.
     :param rank: (str, optional) whether to rank signal values before calculating
-        correlations. "basic": uses pd.rank(), "pct": uses pd.rank(pct=True)
+        correlations. "basic": uses pd.rank(), "pct_rank": uses pd.rank(pct_rank=True)
     :return: (pd.Series) cross-sectional correlation between signal & forward
         returns on each date
     """
@@ -83,9 +83,9 @@ def ic_xsect(
 
     if rank is not None:
         rank = rank.lower()
-        if rank not in ["basic", "pct"]:
-            raise ValueError("Invalid rank type check docstring; use 'basic' or 'pct'")
-        signal = signal.rank(axis=1, pct=(rank == "pct"))
+        if rank not in ["basic", "pct_rank"]:
+            raise ValueError("Invalid rank type check docstring; use 'basic' or 'pct_rank'")
+        signal = signal.rank(axis=1, pct=(rank == "pct_rank"))
 
     corr = signal.corrwith(shifted, axis=1)
 
@@ -99,3 +99,14 @@ def tstat(scores: pd.Series) -> float:
     :return: (float) T-Stat value
     """
     return scores.mean() / scores.std() * np.sqrt(len(scores))
+
+
+def success_rate(scores: pd.Series) -> float:
+    """
+    Calculate the success rate of a series of ICs.
+    number of months IC > 0 / total number of months
+
+    :param scores: (pd.Series) series of scores
+    :return: (float) success rate
+    """
+    return len(scores[scores > 0]) / len(scores)

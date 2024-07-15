@@ -154,7 +154,7 @@ class TestPortfolio(unittest.TestCase):
         tr = (1 + self.rBM).cumprod()
 
         # Portfolio object
-        port = aspen.backtest.portfolio.Portfolio(asset_tr=tr, weights=wgts)
+        port = aspen.backtest.portfolio.Portfolio("test", asset_tr=tr, weights=wgts)
 
         # Calculate drifted weights
         drift_cols = [f"{x}_d" for x in port.asset_tr.columns]

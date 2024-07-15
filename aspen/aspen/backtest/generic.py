@@ -19,6 +19,7 @@ class BTest(IBTest):
 
     def __init__(
             self,
+            name: str,
             *,
             dates: pd.DatetimeIndex,
             tr: pd.DataFrame,
@@ -28,6 +29,7 @@ class BTest(IBTest):
             signal: str = None,
     ) -> None:
         # Store instance vars
+        self._name = name
         self.dates = dates
         self.signals = signals
         self.pcr = pcr
@@ -36,6 +38,11 @@ class BTest(IBTest):
 
         # Align total return data to input dates
         self.tr = Reindex(dates).apply(tr)
+
+    @property
+    def name(self) -> str:
+        """Unique backtest id"""
+        return self._name
 
     def run(self) -> pd.DataFrame:
         """
@@ -60,5 +67,6 @@ class BTest(IBTest):
 
         wgt_df = pd.concat(weights, axis=1).T
         wgt_df.index.freq = pd.infer_freq(wgt_df.index)
+        wgt_df.name = self.name
 
         return wgt_df

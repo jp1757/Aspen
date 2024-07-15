@@ -72,7 +72,11 @@ class TestBTest(unittest.TestCase):
 
         # Create backtest object
         btest = BTest(
-            dates=self.dates, tr=self.tr, signals=SignalsDummy(data=self.sig_df), pcr=PCR()
+            "test",
+            dates=self.dates,
+            tr=self.tr,
+            signals=SignalsDummy(data=self.sig_df),
+            pcr=PCR()
         )
         btdf = btest.run()
 
@@ -103,6 +107,7 @@ class TestBTest(unittest.TestCase):
 
         # Build & run backtest object
         btest = BTest(
+            "test",
             dates=dates,
             tr=self.tr,
             signals=signals,
@@ -251,7 +256,7 @@ class TestPortfolio(unittest.TestCase):
         drift = pd.concat([wgts, drift]).sort_index()
 
         # Run method to test
-        port = aspen.backtest.portfolio.Portfolio(asset_tr=tr, weights=wgts)
+        port = aspen.backtest.portfolio.Portfolio("test", asset_tr=tr, weights=wgts)
 
         # Run assertion statements
         pd.testing.assert_frame_equal(port.drift(tr), drift)
