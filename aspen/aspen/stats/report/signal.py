@@ -139,16 +139,13 @@ def snapshot(
     ax1 = fig.add_subplot(gs[0, :])
 
     ax6 = fig.add_subplot(gs[3, 0])
-    ax4 = fig.add_subplot(gs[2, 0], sharex=ax6)
-    ax2 = fig.add_subplot(gs[1, 0], sharex=ax6)
-    plt.setp(ax2.get_xticklabels(), visible=False)
-    plt.setp(ax4.get_xticklabels(), visible=False)
-
+    ax4 = fig.add_subplot(gs[2, 0])
+    ax2 = fig.add_subplot(gs[1, 0])
+    ax5 = fig.add_subplot(gs[2, 1])
+    ax3 = fig.add_subplot(gs[1, 1])
     ax7 = fig.add_subplot(gs[3, 1])
-    ax5 = fig.add_subplot(gs[2, 1], sharex=ax7)
-    ax3 = fig.add_subplot(gs[1, 1], sharex=ax7)
-    plt.setp(ax3.get_xticklabels(), visible=False)
-    plt.setp(ax5.get_xticklabels(), visible=False)
+
+    __xticklabels(ax6, ax4, ax2, ax5, ax3, ax7)
 
     tbl = ax1.table(cellText=df.values, colLabels=df.columns, loc='center')
     ax1.axis('off')
@@ -185,20 +182,62 @@ def snapshot(
     ax5.grid()
 
     # Get rolling ICs
-    _ics = [
+    _ics = {
+        s.name:
         aspen.stats.report.signal.ics(
             signal=s, asset_tr=asset_tr, lags=list(range(1, 13))
         )[0]
         for s in signal
-    ]
-    rolling_ic = pd.concat([x[ic] for x in ics], axis=1).rolling(rolling).mean()
+    }
+    rolling_ic = pd.concat([x[ic] for k, x in _ics.items()], axis=1).rolling(rolling).mean()
     ax6.plot(rolling_ic)
     ax6.set_ylabel(f"Rolling[{rolling}] IC")
     ax6.grid()
 
-    fig.legend(vol.columns, loc='lower right')
+    # Get IC decay
+    _ic_decay = [
+        pd.Series(pd.DataFrame(v).mean(), name=x) for x, v in _ics.items()
+    ]
+    __bar(ax7, pd.concat(_ic_decay, axis=1))
+    ax7.set_ylabel(f"IC Decay")
+    ax7.grid()
 
-    fig.autofmt_xdate()
+    # Calculate IC decay success rate
+    _srs = {
+        k:
+            pd.Series(
+                {
+                    k2: aspen.stats.library.signal.success_rate(v2)
+                    for k2, v2 in v.items()
+                },
+                name=k
+            )
+        for k, v in _ics.items()
+    }
+    success_rate = pd.DataFrame(_srs)
+    ax7b = ax7.twinx()
+    ax7b.set_ylabel(f"Sucess Rate")
+    ax7b.plot(success_rate)
+
+    # Legend
+    fig.legend(vol.columns, loc="lower right")
+
     fig.tight_layout()
 
     plt.show()
+
+
+def __xticklabels(*axis, rotation: int = 30, alignment: str = "right"):
+    for ax in axis:
+        for label in ax.get_xticklabels():
+            label.set_ha(alignment)
+            label.set_rotation(rotation)
+
+
+def __bar(ax, df: pd.DataFrame, width: float = 0.25):
+    multiplier = 0
+
+    for attribute, measurement in df.items():
+        offset = width * multiplier
+        rects = ax.bar(df.index + offset, measurement, label=attribute, width=width)
+        multiplier += 1
