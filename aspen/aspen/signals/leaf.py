@@ -1,5 +1,5 @@
 """
-Contains objects for linking ITForms to Signals
+Contains objects for linking ITForms to SignalsDummy
 """
 import abc
 from typing import List

@@ -8,7 +8,10 @@ import pandas as pd
 from aspen.tform.library.align import Align
 
 
-def _merge(
+ID = "id"
+
+
+def merge(
         *tr: pd.Series, metric: str, align: bool = True, pct: bool = True, **kwargs
 ) -> pd.DataFrame:
     """
@@ -19,7 +22,7 @@ def _merge(
         functions in aspen.stats.library.ts are available along with pandas built in
         functions
     :param align: (bool, optional) whether to align resulting series
-    :param pct: (bool, optional) convert values into pct by multiplying by 100
+    :param pct: (bool, optional) convert values into pct_rank by multiplying by 100
     :param kwargs: (optional) other parameters to pass to target metric function
     :return: pd.Dataframe of combined values for each input series for each metric
     """
@@ -36,7 +39,7 @@ def _merge(
         return tr
 
 
-def portfolio(
+def series(
         tr: pd.Series, *, periods: int, bps: bool = False, dateformat: str = "%Y-%m-%d"
 ) -> pd.Series:
     """
@@ -53,6 +56,7 @@ def portfolio(
     """
     # Convert to % or bps
     mult = 10000 if bps else 100
+    lbl = "bps" if bps else "%"
 
     # Calculate returns
     returns = tr.pct_change()
@@ -80,8 +84,9 @@ def portfolio(
             len(tr),
         ],
         index=[
-            "cagr", "vol", "sharpe", "drawdown", "drawdown dt", "kurtosis", "skew",
-            "1Y", "3Y", "5Y", "sdate", "edate", "# periods"
+            f"cagr[{lbl}]", f"vol[{lbl}]", "sharpe", f"drawdown[{lbl}]", "drawdown dt",
+            "kurtosis", "skew", f"1Y[{lbl}]", f"3Y[{lbl}]", f"5Y[{lbl}]", "sdate",
+            "edate", "# periods"
         ],
         name=tr.name
     )
@@ -89,7 +94,7 @@ def portfolio(
     return snap
 
 
-def combined(
+def table(
         *tr: pd.Series, periods: int, bps: bool = False, dateformat: str = "%Y-%m-%d"
 ) -> pd.DataFrame:
     """
@@ -102,12 +107,11 @@ def combined(
     :param dateformat: (str, optional) string format to represent dates
     :return: pd.Dataframe of combined portfolio statistics
     """
-    lbl = "bps" if bps else "%"
     df = pd.concat(
-        [portfolio(tr=x, periods=periods, bps=bps, dateformat=dateformat) for x in tr],
+        [series(tr=x, periods=periods, bps=bps, dateformat=dateformat) for x in tr],
         axis=1
     ).T
-    df.index.name = lbl
+    df.index.name = ID
     return df.reset_index()
 
 
@@ -122,7 +126,7 @@ def snapshot(
     Plot a snapshot of portfolio statistics including a summary table and 4 plots:
     total return, rolling sharpe, drawdown, rolling volatility
 
-    :param tr: (pd.Series) total return price series i.e [1.0, 1.01, 0.98...]
+    :param tr: (pd.Series) portfolio total return price series i.e [1.0, 1.01, 0.98...]
     :param periods: (int) periods per year i.e. 12 for monthly, 252 for daily etc.
     :param rolling: (int) rolling period for sharpe and volatility plots
     :param bps: (bool, optional) whether to represent values in basis points (True)
@@ -130,7 +134,7 @@ def snapshot(
     :param dateformat: (str, optional) string format to represent dates
     :return: None
     """
-    df = combined(*tr, periods=periods, bps=bps, dateformat=dateformat)
+    df = table(*tr, periods=periods, bps=bps, dateformat=dateformat)
 
     fig = plt.figure(figsize=(14, 8))
 
@@ -151,19 +155,19 @@ def snapshot(
     tbl.set_fontsize(10)  # Set the desired font size
     tbl.auto_set_column_width(col=list(range(len(df.columns))))  # Adjust all columns
 
-    ax2.plot(_merge(*tr, metric="tr"))
+    ax2.plot(merge(*tr, metric="tr"))
     ax2.set_ylabel("Total Return (%)")
     ax2.grid()
 
-    ax3.plot(_merge(*tr, metric="drawdown"))
+    ax3.plot(merge(*tr, metric="drawdown"))
     ax3.set_ylabel("Drawdown (%)")
     ax3.grid()
 
-    ax4.plot(_merge(*tr, metric="sharpe", rolling=rolling, pct=False, periods=periods))
+    ax4.plot(merge(*tr, metric="sharpe", rolling=rolling, pct=False, periods=periods))
     ax4.set_ylabel("Sharpe")
     ax4.grid()
 
-    vol = _merge(*tr, metric="vol", rolling=rolling, periods=periods)
+    vol = merge(*tr, metric="vol", rolling=rolling, periods=periods)
     ax5.plot(vol)
     ax5.set_ylabel("Volatility (%)")
     ax5.grid()

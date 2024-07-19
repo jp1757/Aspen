@@ -12,6 +12,12 @@ class ISignal(metaclass=abc.ABCMeta):
     Core Individual Signal Interface
     """
 
+    @property
+    @abc.abstractmethod
+    def name(self) -> str:
+        """Unique signal id"""
+        pass
+
     @abc.abstractmethod
     def calculate(self) -> pd.DataFrame:
         """
@@ -28,11 +34,14 @@ class ISignals(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def combine(self, normalise: bool) -> pd.DataFrame:
+    def build(self, name: str = None) -> pd.DataFrame:
         """
-        Combine multiple signals
-        :param normalise: (bool) whether to normalise signal values before combining
-        :return: pd.DataFrame
+        Serve up signal data by either combining multiple signals or
+        returning a specific signal by setting the 'name' parameter
+
+        :param name: (str, optional) name of signal to return
+        :return: pd.DataFrame of signal data indexed by date with columns set
+            to asset ids
         """
         pass
 
@@ -43,8 +52,9 @@ class INormalise(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def norm(self) -> pd.DataFrame:
+    def norm(self, data: pd.DataFrame) -> pd.DataFrame:
         """
         Normalise signal data
+        :param data: (pd.DataFrame) signal data to normalise
         :return: (pd.DataFrame) normalised signal data
         """

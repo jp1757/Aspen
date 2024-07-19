@@ -5,7 +5,7 @@ from typing import List
 import pandas as pd
 
 from aspen.backtest.core import IBTest
-from aspen.signals.core import ISignals
+from aspen.signals.core import ISignals, INormalise
 from aspen.pcr.core import IPortConstruct
 
 from aspen.tform.library.align import Reindex
@@ -19,21 +19,30 @@ class BTest(IBTest):
 
     def __init__(
             self,
+            name: str,
             *,
             dates: pd.DatetimeIndex,
             tr: pd.DataFrame,
             signals: ISignals,
             pcr: IPortConstruct,
-            normalise: bool = True,
-    ):
+            normalise: INormalise = None,
+            signal: str = None,
+    ) -> None:
         # Store instance vars
+        self._name = name
         self.dates = dates
         self.signals = signals
         self.pcr = pcr
         self.normalise = normalise
+        self.signal = signal
 
         # Align total return data to input dates
         self.tr = Reindex(dates).apply(tr)
+
+    @property
+    def name(self) -> str:
+        """Unique backtest id"""
+        return self._name
 
     def run(self) -> pd.DataFrame:
         """
@@ -42,7 +51,11 @@ class BTest(IBTest):
         """
 
         # Calculate signal data
-        signals = self.signals.combine(self.normalise)
+        signals = self.signals.build(name=self.signal)
+
+        # Normalise
+        if self.normalise is not None:
+            signals = self.normalise.norm(signals)
 
         weights = [
             self.pcr.weights(
@@ -54,5 +67,6 @@ class BTest(IBTest):
 
         wgt_df = pd.concat(weights, axis=1).T
         wgt_df.index.freq = pd.infer_freq(wgt_df.index)
+        wgt_df.name = self.name
 
         return wgt_df

@@ -7,13 +7,16 @@ import pandas as pd
 import numpy as np
 
 from aspen.signals import ISignals
+from aspen.signals.generic import SignalDF, Signals
 from aspen.pcr import IPortConstruct
 from aspen.backtest.generic import BTest
+import aspen.pcr.library.quintile
 import aspen.backtest.portfolio
+import aspen.signals.library.normalise
 import tests.utils
 
 
-class Signals(ISignals):
+class SignalsDummy(ISignals):
     """
     Dummy signal combination object to be used with tests
     """
@@ -22,7 +25,15 @@ class Signals(ISignals):
         self.data = data
         self.data.dropna(how="all", inplace=True)
 
-    def combine(self, normalise: bool) -> pd.DataFrame:
+    def build(self, name: str = None) -> pd.DataFrame:
+        """
+        Serve up signal data by either combining multiple signals or
+        returning a specific signal by setting the 'name' parameter
+
+        :param name: (str, optional) name of signal to return
+        :return: pd.DataFrame of signal data indexed by date with columns set
+            to asset ids
+        """
         return self.data
 
 
@@ -61,7 +72,11 @@ class TestBTest(unittest.TestCase):
 
         # Create backtest object
         btest = BTest(
-            dates=self.dates, tr=self.tr, signals=Signals(data=self.sig_df), pcr=PCR()
+            "test",
+            dates=self.dates,
+            tr=self.tr,
+            signals=SignalsDummy(data=self.sig_df),
+            pcr=PCR()
         )
         btdf = btest.run()
 
@@ -77,6 +92,36 @@ class TestBTest(unittest.TestCase):
         d3 = self.sig_df.index[10]
         wgt3 = PCR().weights(date=d3, signals=self.sig_df.iloc[[10]], asset=None)
         pd.testing.assert_series_equal(wgt3, btdf.loc[d3])
+
+    def test_quintile(self):
+        """Test building quintile strategy weights"""
+
+        # Test data
+        dates = self.tr.index
+        zsc = {x: tests.utils.zsc(self.tr, x) for x in [3, 4]}
+        signals = Signals(*[SignalDF(str(x), v) for x, v in zsc.items()])
+        pcr = aspen.pcr.library.quintile.QuantileEW(long_bin=1, short_bin=3)
+        normalise = aspen.signals.library.normalise.Quantile(
+            rank=aspen.tform.library.rank.RankXSect(pct=False), bins=3
+        )
+
+        # Build & run backtest object
+        btest = BTest(
+            "test",
+            dates=dates,
+            tr=self.tr,
+            signals=signals,
+            pcr=pcr,
+            normalise=normalise,
+            signal="3"
+        )
+        wgts = btest.run()
+        summed = wgts.abs().sum(axis=1)
+
+        # Assertion statements
+        np.testing.assert_almost_equal(summed.iloc[1], 2.0)
+        np.testing.assert_almost_equal(summed.iloc[5], 2.0)
+        np.testing.assert_almost_equal(summed.iloc[7], 2.0)
 
 
 class TestPortfolio(unittest.TestCase):
@@ -211,7 +256,7 @@ class TestPortfolio(unittest.TestCase):
         drift = pd.concat([wgts, drift]).sort_index()
 
         # Run method to test
-        port = aspen.backtest.portfolio.Portfolio(asset_tr=tr, weights=wgts)
+        port = aspen.backtest.portfolio.Portfolio("test", asset_tr=tr, weights=wgts)
 
         # Run assertion statements
         pd.testing.assert_frame_equal(port.drift(tr), drift)
