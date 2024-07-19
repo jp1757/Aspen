@@ -134,7 +134,7 @@ def snapshot(
     # Build plot
     fig = plt.figure(figsize=(14, 12))
 
-    gs = fig.add_gridspec(4, 2)
+    gs = fig.add_gridspec(5, 2)
 
     ax1 = fig.add_subplot(gs[0, :])
 
@@ -144,6 +144,7 @@ def snapshot(
     ax5 = fig.add_subplot(gs[2, 1])
     ax3 = fig.add_subplot(gs[1, 1])
     ax7 = fig.add_subplot(gs[3, 1])
+    ax9 = fig.add_subplot(gs[4, 1])
 
     __xticklabels(ax6, ax4, ax2, ax5, ax3, ax7)
 
@@ -198,8 +199,9 @@ def snapshot(
     _ic_decay = [
         pd.Series(pd.DataFrame(v).mean(), name=x) for x, v in _ics.items()
     ]
-    __bar(ax7, pd.concat(_ic_decay, axis=1))
+    pd.concat(_ic_decay, axis=1).plot(ax=ax7, kind="bar")
     ax7.set_ylabel(f"IC Decay")
+    ax7.get_legend().remove()
     ax7.grid()
 
     # Calculate IC decay success rate
@@ -215,9 +217,9 @@ def snapshot(
         for k, v in _ics.items()
     }
     success_rate = pd.DataFrame(_srs)
-    ax7b = ax7.twinx()
-    ax7b.set_ylabel(f"Sucess Rate")
-    ax7b.plot(success_rate)
+    ax9.set_ylabel(f"len(IC > 0) / len(IC)")
+    ax9.plot(success_rate)
+    ax9.grid()
 
     # Legend
     fig.legend(vol.columns, loc="lower right")
