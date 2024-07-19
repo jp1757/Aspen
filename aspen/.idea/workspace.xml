@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/aspen/stats/report/signal.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/report/signal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/stats/report/portfolio.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/report/portfolio.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +68,7 @@
     "Python tests.pytest in tests.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "stats__signal",
+    "git-widget-placeholder": "add__tstat",
     "last_opened_file_path": "C:/Users/james/dev/Research/HASQuant/aspen/aspen/stats/report",
     "settings.editor.selected.configurable": "preferences.sourceCode.XML"
   }
