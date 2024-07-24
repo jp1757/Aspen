@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from aspen.tform.library.align import Align
+import aspen.stats.library.signal
 
 
 ID = "id"
@@ -72,6 +73,7 @@ def series(
             round(tr.cagr(periods=periods) * mult, 1),
             round(tr.vol(periods=periods) * mult, 1),
             round(tr.sharpe(periods=periods), 2),
+            round(aspen.stats.library.signal.tstat(returns), 2),
             round(dd_min * mult, 1),
             dd_date.strftime(dateformat),
             round(returns.kurt(), 2),
@@ -84,7 +86,7 @@ def series(
             len(tr),
         ],
         index=[
-            f"cagr[{lbl}]", f"vol[{lbl}]", "sharpe", f"drawdown[{lbl}]", "drawdown dt",
+            f"cagr[{lbl}]", f"vol[{lbl}]", "sharpe", "tstat", f"drawdown[{lbl}]", "drawdown dt",
             "kurtosis", "skew", f"1Y[{lbl}]", f"3Y[{lbl}]", f"5Y[{lbl}]", "sdate",
             "edate", "# periods"
         ],
