@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/stats/library/signal.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/library/signal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_stats.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +55,7 @@
     "Python tests.pytest for test_signals.TestSignals.test_smean.executor": "Run",
     "Python tests.pytest for test_stats.TestSignal.test_ic.executor": "Run",
     "Python tests.pytest for test_stats.TestSignal.test_ic_xsect.executor": "Run",
+    "Python tests.pytest for test_stats.TestSignal.test_pure_factor.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.test_cagr.executor": "Run",
     "Python tests.pytest for test_stats.TestStats.test_drawdown.executor": "Run",
@@ -83,24 +84,7 @@
       <recent name="C:\Users\james\dev\Research\HASQuant\aspen\tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.pytest in tests">
-    <configuration name="pytest for test_btest.TestBTest" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="aspen" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_btest.TestBTest&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python tests.pytest for test_stats.TestSignal.test_pure_factor">
     <configuration name="pytest for test_btest.TestBTest.test_quintile" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="aspen" />
       <option name="ENV_FILES" value="" />
@@ -132,6 +116,23 @@
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_signals.TestSignals.test_smean&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for test_stats.TestSignal.test_pure_factor" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="aspen" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_stats.TestSignal.test_pure_factor&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -171,11 +172,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.pytest for test_stats.TestSignal.test_pure_factor" />
         <item itemvalue="Python tests.pytest in tests" />
         <item itemvalue="Python tests.pytest for test_btest.TestBTest.test_quintile" />
         <item itemvalue="Python tests.pytest for test_signals.TestSignals.test_smean" />
         <item itemvalue="Python tests.pytest in test_signals.py" />
-        <item itemvalue="Python tests.pytest for test_btest.TestBTest" />
       </list>
     </recent_temporary>
   </component>

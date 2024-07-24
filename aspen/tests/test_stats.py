@@ -4,6 +4,7 @@ import unittest
 
 import numpy as np
 import pandas as pd
+import sklearn.linear_model
 
 import aspen.backtest.portfolio
 import aspen.stats
@@ -189,6 +190,9 @@ class TestSignal(unittest.TestCase):
         )
         self.aapl = (1 + self.rBM.aapl).cumprod()
 
+        self.tr = (1 + self.rBM).cumprod()
+        self.zsc = {x: self.zscore(self.tr, x) for x in [3, 4, 5]}
+
     @staticmethod
     def zscore(tr: pd.Series, rolling: int) -> pd.Series:
         """Calculate zscore"""
@@ -297,3 +301,28 @@ class TestSignal(unittest.TestCase):
         pd.testing.assert_series_equal(
             _series(True), xsect_rank, check_names=False, check_freq=False
         )
+
+    def test_pure_factor(self):
+        """Test pure factor calculation"""
+
+        # Calculate test data
+        df = pd.concat(
+            [pd.Series(self.tr.pct_change().shift(-1).stack(), name="ret")] +
+            [pd.Series(z.stack(), name=f"zsc[{x}]") for x, z in self.zsc.items()],
+            axis=1
+        )
+        df = df.unstack().dropna().iloc[5].unstack().T
+
+        x = df.iloc[:, 1:]
+        y = df.iloc[:, 0]
+
+        # Using sklearn
+        regression = sklearn.linear_model.LinearRegression()
+        regression.fit(x, y)
+
+        # Run function
+        fret, ftr = aspen.stats.library.signal.pure_factor(
+            self.zsc[3], *[x for y, x in self.zsc.items() if y != 3], tr=self.tr
+        )
+
+        np.testing.assert_almost_equal(regression.coef_[0], fret.iloc[6])
