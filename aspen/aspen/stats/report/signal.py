@@ -7,14 +7,14 @@ from typing import List, Tuple, Dict
 import matplotlib.pyplot as plt
 import pandas as pd
 
-import aspen.pcr.library.quintile
+import aspen.library.pcr.quintile
 import aspen.signals.library.normalise
 import aspen.stats.library.signal
 import aspen.stats.report.portfolio
 from aspen.backtest.generic import BTest
 from aspen.backtest.portfolio import Portfolio
 from aspen.signals.core import ISignal
-from aspen.signals.generic import Signals, SignalDF
+from aspen.signals.generic import Signals
 
 ID = aspen.stats.report.portfolio.ID
 
@@ -25,7 +25,7 @@ def qport(
     # Wrap signal in ISignals object
     _signals = Signals(isignal)
     # Init quantile portfolio construction
-    pcr = aspen.pcr.library.quintile.QuantileEW(long_bin=1, short_bin=bins)
+    pcr = aspen.library.pcr.quintile.QuantileEW(long_bin=1, short_bin=bins)
     # Normalize signal data cross-sectionally into bins
     normalise = aspen.signals.library.normalise.Quantile(
         rank=aspen.tform.library.rank.RankXSect(pct=pct_rank), bins=bins

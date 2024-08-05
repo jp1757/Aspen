@@ -6,7 +6,7 @@ import unittest
 import pandas as pd
 import numpy as np
 
-from aspen.pcr.library.quintile import QuantileEW
+from aspen.library.pcr.quintile import QuantileEW
 
 
 class TestLibrary(unittest.TestCase):
