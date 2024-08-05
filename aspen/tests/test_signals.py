@@ -14,7 +14,7 @@ from aspen.tform.pipeline import Pipeline
 from aspen.signals.core import ISignal
 from aspen.signals.generic import Signal
 from aspen.signals.leaf import Leaf, LeafSeries
-from aspen.signals.library.signals import SMean
+from aspen.library.signals.signals import SMean
 
 
 class DummySignal(ISignal):

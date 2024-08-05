@@ -12,7 +12,7 @@ from aspen.pcr import IPortConstruct
 from aspen.backtest.generic import BTest
 import aspen.library.pcr.quintile
 import aspen.backtest.portfolio
-import aspen.signals.library.normalise
+import aspen.library.signals.normalise
 import tests.utils
 
 
@@ -101,7 +101,7 @@ class TestBTest(unittest.TestCase):
         zsc = {x: tests.utils.zsc(self.tr, x) for x in [3, 4]}
         signals = Signals(*[SignalDF(str(x), v) for x, v in zsc.items()])
         pcr = aspen.library.pcr.quintile.QuantileEW(long_bin=1, short_bin=3)
-        normalise = aspen.signals.library.normalise.Quantile(
+        normalise = aspen.library.signals.normalise.Quantile(
             rank=aspen.tform.library.rank.RankXSect(pct=False), bins=3
         )
 
