@@ -5,7 +5,7 @@ Test asset returns calculations
 import unittest
 import pandas as pd
 
-from aspen.tform.library.asset import Returns
+from aspen.library.tform.asset import Returns
 import tests.utils as utils
 
 

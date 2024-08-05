@@ -1,3 +1,0 @@
-"""
-Library of TForm implementations
-"""

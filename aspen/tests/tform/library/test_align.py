@@ -5,7 +5,7 @@ Test alignment transformations
 import unittest
 import pandas as pd
 
-from aspen.tform.library.align import Reindex, Align
+from aspen.library.tform.align import Reindex, Align
 import tests.utils as utils
 
 

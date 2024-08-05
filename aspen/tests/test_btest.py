@@ -13,6 +13,7 @@ from aspen.backtest.generic import BTest
 import aspen.library.pcr.quintile
 import aspen.backtest.portfolio
 import aspen.library.signals.normalise
+import aspen.library.tform
 import tests.utils
 
 
@@ -102,7 +103,7 @@ class TestBTest(unittest.TestCase):
         signals = Signals(*[SignalDF(str(x), v) for x, v in zsc.items()])
         pcr = aspen.library.pcr.quintile.QuantileEW(long_bin=1, short_bin=3)
         normalise = aspen.library.signals.normalise.Quantile(
-            rank=aspen.tform.library.rank.RankXSect(pct=False), bins=3
+            rank=aspen.library.tform.rank.RankXSect(pct=False), bins=3
         )
 
         # Build & run backtest object

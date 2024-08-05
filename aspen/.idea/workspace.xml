@@ -5,12 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06459309-bd01-4709-b406-64298b6fc20f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/aspen/library/pcr/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/pcr/library/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/library/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/pcr/library/quintile.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/library/pcr/quintile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aspen/stats/report/signal.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/report/signal.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/aspen/library/tform/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/backtest/generic.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/backtest/generic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/backtest/portfolio.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/backtest/portfolio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/library/signals/normalise.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/library/signals/normalise.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/stats/library/portfolio.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/library/portfolio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/stats/library/signal.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/library/signal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/stats/report/portfolio.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/stats/report/portfolio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/tform/library/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/tform/library/align.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/library/tform/align.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/tform/library/asset.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/library/tform/asset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aspen/tform/library/rank.py" beforeDir="false" afterPath="$PROJECT_DIR$/aspen/library/tform/rank.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test_btest.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_btest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_pcr.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_pcr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/tform/library/test_align.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/tform/library/test_align.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/tform/library/test_asset.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/tform/library/test_asset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/tform/library/test_rank.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/tform/library/test_rank.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,9 +93,11 @@
       <recent name="C:\Users\james\dev\Research\HASQuant\aspen\aspen\stats\report" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\james\dev\Research\HASQuant\aspen\aspen\library\tform" />
+      <recent name="C:\Users\james\dev\Research\HASQuant\aspen\aspen\library\signals" />
+      <recent name="C:\Users\james\dev\Research\HASQuant\aspen\aspen\library\pcr" />
       <recent name="C:\Users\james\dev\Research\HASQuant\aspen\aspen\stats\report" />
       <recent name="C:\Users\james\dev\Research\HASQuant\aspen\aspen\stats\library" />
-      <recent name="C:\Users\james\dev\Research\HASQuant\aspen\tests" />
     </key>
   </component>
   <component name="RunManager" selected="Python tests.pytest in tests">
