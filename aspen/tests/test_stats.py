@@ -322,7 +322,10 @@ class TestSignal(unittest.TestCase):
 
         # Run function
         fret, ftr = aspen.stats.library.signal.pure_factor(
-            self.zsc[3], *[x for y, x in self.zsc.items() if y != 3], tr=self.tr
+            self.zsc[3],
+            *[x for y, x in self.zsc.items() if y != 3],
+            tr=self.tr,
+            name="test"
         )
 
         np.testing.assert_almost_equal(regression.coef_[0], fret.iloc[6])

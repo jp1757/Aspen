@@ -114,7 +114,7 @@ def success_rate(scores: pd.Series) -> float:
 
 
 def pure_factor(
-        factor: pd.DataFrame, *others: pd.DataFrame, tr: pd.DataFrame
+        factor: pd.DataFrame, *others: pd.DataFrame, tr: pd.DataFrame, name: str,
 ) -> Tuple[pd.Series, pd.Series]:
     """
     Calculate a pure factor return by stripping out exposures to traditional risk or
@@ -130,6 +130,7 @@ def pure_factor(
     :param tr: (pd.DataFrame) total return prices of assets to calculate forward
         returns from i.e [1.0, 1.01, 0.98...]. Column names should be set to assets
         & match the signal dataframe.
+    :param name: (str) name of factor to set series.name attribute to for outputs
 
     :return: (Tuple[pd.Series, pd.Series]) a series of pure factor returns, a series
         of pure factor total return prices
@@ -157,5 +158,8 @@ def pure_factor(
     fret.iloc[0] = 0
     ftr = (1 + fret).cumprod()
     fret.iloc[0] = np.NaN
+
+    fret.name = name
+    ftr.name = name
 
     return fret, ftr

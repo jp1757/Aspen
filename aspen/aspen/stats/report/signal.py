@@ -2,7 +2,7 @@
 Utility functions for plotting charts & snapshot performance table
 """
 
-from typing import List
+from typing import List, Tuple, Dict
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -14,14 +14,14 @@ import aspen.stats.report.portfolio
 from aspen.backtest.generic import BTest
 from aspen.backtest.portfolio import Portfolio
 from aspen.signals.core import ISignal
-from aspen.signals.generic import Signals
+from aspen.signals.generic import Signals, SignalDF
 
 ID = aspen.stats.report.portfolio.ID
 
 
 def qport(
         isignal: ISignal, *, asset_tr: pd.DataFrame, bins: int, pct_rank: bool = False
-) -> pd.DataFrame:
+) -> pd.Series:
     # Wrap signal in ISignals object
     _signals = Signals(isignal)
     # Init quantile portfolio construction
@@ -46,7 +46,9 @@ def qport(
     return port.tr
 
 
-def ics(signal: ISignal, asset_tr: pd.DataFrame, lags: List[int]):
+def ics(
+        signal: ISignal, asset_tr: pd.DataFrame, lags: List[int]
+) -> Tuple[Dict[int, pd.Series], Dict[int, float]]:
     # Calculate cross-sectional ICs
     scores = {
         lag: pd.Series(
@@ -65,7 +67,7 @@ def ics(signal: ISignal, asset_tr: pd.DataFrame, lags: List[int]):
     return scores, tstats
 
 
-def series(scores, tstats, name: str) -> pd.DataFrame:
+def row(scores, tstats, name: str) -> pd.DataFrame:
     # Combine stats
     return pd.concat(
         [
@@ -79,14 +81,14 @@ def series(scores, tstats, name: str) -> pd.DataFrame:
     ).round(2)
 
 
-def table(*signal: ISignal, asset_tr: pd.DataFrame, lags: List[int]):
-    _series = [
-        series(
+def table(*signal: ISignal, asset_tr: pd.DataFrame, lags: List[int]) -> pd.DataFrame:
+    _row = [
+        row(
             *ics(signal=s, asset_tr=asset_tr, lags=lags), name=s.name
         )
         for s in signal
     ]
-    df = pd.concat(_series, axis=1).T
+    df = pd.concat(_row, axis=1).T
     df.index.name = ID
     return df.reset_index()
 
@@ -98,6 +100,7 @@ def snapshot(
         bins: int,
         periods: int,
         rolling: int,
+        pure: List[ISignal] = None,
         ic: int = 1,
         pct_rank: bool = False,
         bps: bool = False,
@@ -107,9 +110,23 @@ def snapshot(
     Plot a snapshot of portfolio statistics including a summary table and 4 plots:
     total return, rolling sharpe, drawdown, rolling volatility
 
-    :param tr: (pd.Series) portfolio total return price series i.e [1.0, 1.01, 0.98...]
+    :param signal: (ISignal) signal objects to calculate efficacy stats around
+    :param asset_tr: (pd.DataFrame) asset total return prices i.e [1.0, 1.01, 0.98...]
+    :param lags: (List[int]) periods to test predictive power of signal over
+        i.e. calculate correlation between signal at time T vs return from T to T+1, or
+        return from T to T+3 - lags = [1, 3] for this example
+    :param bins: (int) number of fractiles to split assets into.  Each asset is ranked
+        cross-sectionally on each date, by each signal.
     :param periods: (int) periods per year i.e. 12 for monthly, 252 for daily etc.
-    :param rolling: (int) rolling period for sharpe and volatility plots
+    :param rolling: (int) rolling period for sharpe, volatility & IC plots
+    :param pure: (List[ISignal], optional) calculate 'pure' factor returns for each input
+        factor by stripping out the return contribution from this list of risk factors.
+        It will leave behind approximately the return when taking a 1SD exposure to the
+        factor/signal
+    :param ic: (int, optional) determines which IC lag to plot for each signal on the
+        rolling IC plot
+    :param pct_rank: (bool, optional) whether to percentile rank the assets by each
+        signal value.  Otherwise, use a normal ordered rank.
     :param bps: (bool, optional) whether to represent values in basis points (True)
         or percentage points (False)
     :param dateformat: (str, optional) string format to represent dates
@@ -120,16 +137,40 @@ def snapshot(
     sig_df = table(*signal, asset_tr=asset_tr, lags=lags)
 
     # Build backtests for each signal & calculate portfolio returns
-    ports = [
+    port_trs = [
         qport(s, asset_tr=asset_tr, bins=bins, pct_rank=pct_rank)
         for s in signal
     ]
+
+    # Calculate pure factor returns if set
+    if pure is not None:
+        _pure = [
+            aspen.stats.library.signal.pure_factor(
+                s.calculate(),
+                *[x.calculate() for x in pure],
+                tr=asset_tr,
+                name=f"{s.name}_pure"
+            )[1]
+            for s in signal
+        ]
+        # Add in raw factor returns by not stripping out risk factor contribution
+        _raw = [
+            aspen.stats.library.signal.pure_factor(
+                s.calculate(), tr=asset_tr, name=f"{s.name}_raw"
+            )[1]
+            for s in signal
+        ]
+
+        # Add to other portfolio total return indices
+        port_trs = port_trs + _pure + _raw
+
+    # Calculate porfolio stats table
     port_df = aspen.stats.report.portfolio.table(
-        *ports, periods=periods, bps=bps, dateformat=dateformat
+        *port_trs, periods=periods, bps=bps, dateformat=dateformat
     )
 
     # Combine summary dataframes
-    df = pd.merge(port_df, sig_df, on=ID)
+    df = pd.merge(port_df, sig_df, on=ID, how="outer")
 
     # Build plot
     fig = plt.figure(figsize=(14, 12))
@@ -156,19 +197,19 @@ def snapshot(
     tbl.auto_set_column_width(col=list(range(len(df.columns))))  # Adjust all columns
 
     # Plot total return
-    ax2.plot(aspen.stats.report.portfolio.merge(*ports, metric="tr"))
+    ax2.plot(aspen.stats.report.portfolio.merge(*port_trs, metric="tr"))
     ax2.set_ylabel("Total Return (%)")
     ax2.grid()
 
     # Plot Drawdown
-    ax3.plot(aspen.stats.report.portfolio.merge(*ports, metric="drawdown"))
+    ax3.plot(aspen.stats.report.portfolio.merge(*port_trs, metric="drawdown"))
     ax3.set_ylabel("Drawdown (%)")
     ax3.grid()
 
     # Plot Sharpe Ratio
     ax4.plot(
         aspen.stats.report.portfolio.merge(
-            *ports, metric="sharpe", rolling=rolling, pct=False, periods=periods
+            *port_trs, metric="sharpe", rolling=rolling, pct=False, periods=periods
         )
     )
     ax4.set_ylabel("Sharpe")
@@ -176,7 +217,7 @@ def snapshot(
 
     # Plot annualised volatility
     vol = aspen.stats.report.portfolio.merge(
-        *ports, metric="vol", rolling=rolling, periods=periods
+        *port_trs, metric="vol", rolling=rolling, periods=periods
     )
     ax5.plot(vol)
     ax5.set_ylabel("Volatility (%)")
