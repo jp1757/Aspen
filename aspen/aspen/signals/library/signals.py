@@ -4,7 +4,6 @@ Signal interface implementations
 
 import pandas as pd
 
-from aspen.signals.core import ISignal
 from aspen.signals.generic import Signals
 
 

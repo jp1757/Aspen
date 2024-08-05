@@ -6,8 +6,9 @@ from typing import Tuple, Union
 
 import numpy as np
 import pandas as pd
+import sklearn.linear_model
 
-from aspen.tform.library.align import Reindex
+from aspen.tform.library.align import Reindex, Align
 
 
 def __align_returns(
@@ -110,3 +111,55 @@ def success_rate(scores: pd.Series) -> float:
     :return: (float) success rate
     """
     return len(scores[scores > 0]) / len(scores)
+
+
+def pure_factor(
+        factor: pd.DataFrame, *others: pd.DataFrame, tr: pd.DataFrame, name: str,
+) -> Tuple[pd.Series, pd.Series]:
+    """
+    Calculate a pure factor return by stripping out exposures to traditional risk or
+    other relevant factors.  We do this by performing a multivariate cross-sectional
+    regression on each date.  The regression coefficient of the selected factor is
+    used to proxy the pure factor return.  In essence this is the equivelent return
+    when taking a 1 STD exposure to the factor whilst stripping out exposure to the others
+
+    :param factor: (pd.DataFrame) factor to calculate pure returns for. Column names
+        should be set to assets, with dates in the index.
+    :param others: (pd.DataFrame) factors to strip out. Column names should be set to
+        assets, with dates in the index.
+    :param tr: (pd.DataFrame) total return prices of assets to calculate forward
+        returns from i.e [1.0, 1.01, 0.98...]. Column names should be set to assets
+        & match the signal dataframe.
+    :param name: (str) name of factor to set series.name attribute to for outputs
+
+    :return: (Tuple[pd.Series, pd.Series]) a series of pure factor returns, a series
+        of pure factor total return prices
+    """
+
+    # Align factors with returns
+    align = Align(*[x.index for x in others] + [factor.index] + [tr.index])
+    ret_1M = align.apply(tr).pct_change().shift(-1).fillna(0)
+    reindex = Reindex(ret_1M.index)
+    factors = [reindex.apply(x) for x in [factor] + list(others)]
+
+    # Combine factors
+    df = pd.concat([r.stack() for r in factors], axis=1)
+
+    # Using sklearn
+    # Loop through dates calculating cross-sectional regression of factors vs
+    # forward returns
+    frets = {
+        _dt: sklearn.linear_model.LinearRegression().fit(df.loc[_dt], _rets).coef_[0]
+        for _dt, _rets in ret_1M.iterrows()
+    }
+
+    # Shift returns back forward
+    fret = pd.Series(frets).shift(1)
+    fret.iloc[0] = 0
+    ftr = (1 + fret).cumprod()
+    fret.iloc[0] = np.NaN
+
+    fret.name = name
+    ftr.name = name
+
+    return fret, ftr
