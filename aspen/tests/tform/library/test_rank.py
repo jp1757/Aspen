@@ -7,7 +7,7 @@ from typing import Union
 
 import pandas as pd
 
-import aspen.tform.library.rank
+import aspen.library.tform.rank
 import tests.utils as utils
 
 
@@ -33,9 +33,9 @@ class TestRank(unittest.TestCase):
         """Test cross-sectional rank using RankXSect tform"""
 
         # Run rank tform
-        ranks = aspen.tform.library.rank.RankXSect(ascending=True, pct=False).apply(
+        ranks = aspen.library.tform.rank.RankXSect(ascending=True, pct=False).apply(
             self.zsc)
-        pct = aspen.tform.library.rank.RankXSect(pct=True).apply(self.zsc)
+        pct = aspen.library.tform.rank.RankXSect(pct=True).apply(self.zsc)
 
         # Assertion statements
         pd.testing.assert_series_equal(
@@ -49,8 +49,8 @@ class TestRank(unittest.TestCase):
         """Test cross-sectional bins using QCutXSect tform"""
 
         # Run qcut tform
-        qcut_3 = aspen.tform.library.rank.QCutXSect(bins=3).apply(self.zsc)
-        qcut_5 = aspen.tform.library.rank.QCutXSect(bins=5).apply(self.zsc)
+        qcut_3 = aspen.library.tform.rank.QCutXSect(bins=3).apply(self.zsc)
+        qcut_5 = aspen.library.tform.rank.QCutXSect(bins=5).apply(self.zsc)
 
         # Assertion statements
         self.assertEqual(qcut_3.max().max(), 3)

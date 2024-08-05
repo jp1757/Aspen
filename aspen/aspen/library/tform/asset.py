@@ -4,7 +4,7 @@ Objects for transforming asset returns data
 import pandas as pd
 
 from aspen.tform.core import ITForm
-from aspen.tform.library.align import Reindex
+from aspen.library.tform.align import Reindex
 
 
 class Returns(ITForm):

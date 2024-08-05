@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import sklearn.linear_model
 
-from aspen.tform.library.align import Reindex, Align
+from aspen.library.tform.align import Reindex, Align
 
 
 def __align_returns(

@@ -7,7 +7,7 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
-from aspen.tform.library.align import Align
+from aspen.library.tform.align import Align
 import aspen.stats.library.scalar
 
 

@@ -4,7 +4,7 @@ INormalise implementations
 
 import pandas as pd
 
-import aspen.tform.library.rank
+import aspen.library.tform.rank
 from aspen.signals.core import INormalise
 from aspen.tform.core import ITForm
 
@@ -23,7 +23,7 @@ class Quantile(INormalise):
         :param kwargs: (optional) kwargs to pass to aspen.tform.library.rank.QCutXSect
         """
         self.rank = rank
-        self.qcut = aspen.tform.library.rank.QCutXSect(bins=bins, **kwargs)
+        self.qcut = aspen.library.tform.rank.QCutXSect(bins=bins, **kwargs)
 
     def norm(self, data: pd.DataFrame) -> pd.DataFrame:
         """

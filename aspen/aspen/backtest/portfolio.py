@@ -6,7 +6,7 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 
-from aspen.tform.library.align import Align, Reindex
+from aspen.library.tform.align import Align
 
 
 def returns(

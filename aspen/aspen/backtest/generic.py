@@ -1,14 +1,13 @@
 """
 Generic backtest object
 """
-from typing import List
 import pandas as pd
 
 from aspen.backtest.core import IBTest
 from aspen.signals.core import ISignals, INormalise
 from aspen.pcr.core import IPortConstruct
 
-from aspen.tform.library.align import Reindex
+from aspen.library.tform.align import Reindex
 
 
 class BTest(IBTest):
