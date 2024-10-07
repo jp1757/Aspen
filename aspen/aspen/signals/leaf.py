@@ -32,7 +32,7 @@ class ILeaf(metaclass=abc.ABCMeta):
 
 class Leaf(ILeaf):
     """
-    Acts as a Signal compatible wrapper for an ITForm object mapping
+    Acts as a SignalHeap compatible wrapper for an ITForm object mapping
     data from the input heap
     """
 
@@ -85,7 +85,7 @@ class Leaf(ILeaf):
 
 class LeafSeries(ILeaf):
     """
-    Acts as a Signal compatible wrapper for an ITForm object passing transformed
+    Acts as a SignalHeap compatible wrapper for an ITForm object passing transformed
     data from previous transformation
     """
 

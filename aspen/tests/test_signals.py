@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from aspen.tform.generic import TForm, Merge
 from aspen.tform.pipeline import Pipeline
 from aspen.signals.core import ISignal
-from aspen.signals.generic import Signal
+from aspen.signals.generic import SignalHeap
 from aspen.signals.leaf import Leaf, LeafSeries
 from aspen.library.signals.signals import SMean
 
@@ -75,7 +75,7 @@ class TestSignal(unittest.TestCase):
         """
 
         # Build signal object passing various transformation objects
-        sig = Signal(
+        sig = SignalHeap(
             Leaf(
                 Pipeline(TForm("add", other=1), TForm("cumprod")),
                 "asset_tr",
@@ -100,7 +100,7 @@ class TestSignal(unittest.TestCase):
     def test_invalid_mapping(self):
         """Test mapping not found raises exception"""
 
-        sig = Signal(
+        sig = SignalHeap(
             Leaf(
                 Pipeline(TForm("rolling", window=3), TForm("mean")),
                 "signal",

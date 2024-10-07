@@ -2,11 +2,21 @@
 Test alignment transformations
 """
 
+import os
+import sys
 import unittest
+
 import pandas as pd
 
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+)
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+)
+
 from aspen.library.tform.align import Reindex, Align
-import tests.utils as utils
+import utils
 
 
 class TestAlign(unittest.TestCase):
@@ -27,7 +37,8 @@ class TestAlign(unittest.TestCase):
         # Build dummy test data
         d1, ret1 = utils.returns("B", sdate=pd.Timestamp(year=2010, month=1, day=1))
         d2, ret2 = utils.returns("D", sdate=pd.Timestamp(year=2010, month=5, day=1))
-        d3, ret3 = utils.returns("BM", sdate=pd.Timestamp(year=2010, month=1, day=1), months=9)
+        d3, ret3 = utils.returns("BM", sdate=pd.Timestamp(year=2010, month=1, day=1),
+                                 months=9)
 
         # Create TForm using default mode = 'intersect'
         dates = d1.intersection(d2).intersection(d3)

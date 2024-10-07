@@ -1,5 +1,5 @@
 """
-Provides a definition for a Signal object
+Provides a definition for a SignalHeap object
 """
 from typing import Dict
 
@@ -9,7 +9,7 @@ from aspen.signals.core import ISignal, ISignals
 from aspen.signals.leaf import ILeaf
 
 
-class Signal(ISignal):
+class SignalHeap(ISignal):
     """
     Generic object for building signals from a group of transformations
     """

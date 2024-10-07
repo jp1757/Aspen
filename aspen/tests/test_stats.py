@@ -1,25 +1,30 @@
 """Unit tests for the stats package"""
 
-import unittest
+import sys
+import os
 
-import numpy as np
+import unittest
 import pandas as pd
+import numpy as np
+
 import sklearn.linear_model
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import aspen.backtest.portfolio
 import aspen.stats
 import aspen.stats.library.signal
-import tests.utils
+import utils
 
 
 class TestPortfolio(unittest.TestCase):
 
     def setUp(self):
         # Load dummy data
-        self.dBM, self.rBM = tests.utils.returns(
+        self.dBM, self.rBM = utils.returns(
             "BM", sdate=pd.Timestamp(year=2010, month=1, day=1), months=26
         )
-        self.dW, self.rW = tests.utils.returns(
+        self.dW, self.rW = utils.returns(
             "W", sdate=pd.Timestamp(year=2010, month=1, day=1)
         )
 
@@ -182,10 +187,10 @@ class TestSignal(unittest.TestCase):
 
     def setUp(self):
         # Load dummy data
-        self.dBM, self.rBM = tests.utils.returns(
+        self.dBM, self.rBM = utils.returns(
             "BM", sdate=pd.Timestamp(year=2010, month=1, day=1), months=26
         )
-        self.dW, self.rW = tests.utils.returns(
+        self.dW, self.rW = utils.returns(
             "W", sdate=pd.Timestamp(year=2010, month=1, day=1)
         )
         self.aapl = (1 + self.rBM.aapl).cumprod()
