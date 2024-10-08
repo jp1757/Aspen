@@ -2,12 +2,12 @@
 Unit tests for backtest logic
 """
 
-import sys
 import os
-
+import sys
 import unittest
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -43,7 +43,7 @@ class SignalsDummy(ISignals):
         return self.data
 
 
-class PCR(IPortConstruct):
+class PCRProp(IPortConstruct):
     """
     Dummy portfolio construction object to be used with tests
     """
@@ -82,22 +82,22 @@ class TestBTest(unittest.TestCase):
             dates=self.dates,
             tr=self.tr,
             signals=SignalsDummy(data=self.sig_df),
-            pcr=PCR()
+            pcr=PCRProp()
         )
         btdf = btest.run()
 
         # Run tests
-        d1 = self.sig_df.index[0]
-        wgt1 = PCR().weights(date=d1, signals=self.sig_df.iloc[[0]], asset=None)
-        pd.testing.assert_series_equal(wgt1, btdf.loc[d1])
+        d1 = self.sig_df.index[1]
+        wgt1 = PCRProp().weights(date=d1, signals=self.sig_df.iloc[[0]], asset=None)
+        pd.testing.assert_series_equal(wgt1, btdf.loc[d1], check_names=False)
 
         d2 = self.sig_df.index[-1]
-        wgt2 = PCR().weights(date=d2, signals=self.sig_df.iloc[[-1]], asset=None)
-        pd.testing.assert_series_equal(wgt2, btdf.loc[d2])
+        wgt2 = PCRProp().weights(date=d2, signals=self.sig_df.iloc[[-2]], asset=None)
+        pd.testing.assert_series_equal(wgt2, btdf.loc[d2], check_names=False)
 
-        d3 = self.sig_df.index[10]
-        wgt3 = PCR().weights(date=d3, signals=self.sig_df.iloc[[10]], asset=None)
-        pd.testing.assert_series_equal(wgt3, btdf.loc[d3])
+        d3 = self.sig_df.index[11]
+        wgt3 = PCRProp().weights(date=d3, signals=self.sig_df.iloc[[10]], asset=None)
+        pd.testing.assert_series_equal(wgt3, btdf.loc[d3], check_names=False)
 
     def test_quintile(self):
         """Test building quintile strategy weights"""
@@ -335,3 +335,63 @@ class TestPortfolio(unittest.TestCase):
         weekly asset total return prices
         """
         self.drift(returns=self.rW, weights=self.rBM)
+
+    def test_btest(self):
+        """Test end-to-end from signal to returns"""
+
+        # Build dummy data
+        svals = [0., 1., 1., 1., 1., 1., 1., -1., -1., -1., -1., -1., -1., 1., 1.]
+        sig = pd.Series(
+            data=svals,
+            index=pd.date_range(
+                start='2000-01-07', end='2000-01-27', freq='B', name='date'
+            ),
+            name="asset"
+        ).to_frame()
+
+        trvals = [
+            5106.4, 5001.4, 4939.3, 4972.8, 5057.3, 4981.2, 5000.2, 4991.1, 5093.1,
+            5104.5, 4957.2, 4921.1, 4844.2, 4843.4, 4872.3, 4780.2, 4879.9, 4905.8
+        ]
+        tr = pd.Series(
+            data=trvals,
+            index=pd.date_range(
+                start='2000-01-04', end='2000-01-27', freq='B', name='date'
+            ),
+            name="asset"
+        ).to_frame()
+
+        # Define dummy portfolio construction object
+        class _PCR(IPortConstruct):
+            def weights(
+                    self, *, date: pd.Timestamp, signals: pd.DataFrame,
+                    asset: pd.DataFrame
+            ) -> pd.Series:
+                return signals.iloc[-1]
+
+        # Build backtest object
+        btest = BTest(
+            name="test",
+            dates=sig.index,
+            tr=tr,
+            signals=SignalsDummy(sig),
+            pcr=_PCR()
+        )
+
+        # Build portfolio
+        port = aspen.backtest.portfolio.Portfolio(
+            name="test", asset_tr=tr, weights=btest.run()
+        )
+
+        # Test data
+        tvals = pd.Series(
+            data=[
+                0, 0, 0.003814, 0.001987, 0.022464, 0.024753, -0.004818, -0.012065,
+                0.003373, 0.003538, -0.00245, 0.016407, -0.004792, -0.010074
+            ],
+            index=pd.date_range(start='2000-01-10', end='2000-01-27', freq='B')
+        )
+
+        # Assertion statement
+        pd.testing.assert_series_equal(tvals, port.tr - 1, check_less_precise=6,
+                                       check_names=False)

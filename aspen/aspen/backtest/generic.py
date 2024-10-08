@@ -68,4 +68,10 @@ class BTest(IBTest):
         wgt_df.index.freq = pd.infer_freq(wgt_df.index)
         wgt_df.name = self.name
 
+        # Shift weights forward 1-step
+        # date  signal  weight
+        # t     1       0
+        # t+1   1       1
+        wgt_df = wgt_df.shift(1)
+
         return wgt_df
