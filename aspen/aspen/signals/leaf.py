@@ -14,7 +14,7 @@ class ILeaf(metaclass=abc.ABCMeta):
     @property
     @abc.abstractmethod
     def key(self) -> str:
-        """Leaf name used to add transformed data to heap"""
+        """LeafHeap name used to add transformed data to heap"""
         pass
 
     def build(self, data: pd.DataFrame, **heap: pd.DataFrame) -> pd.DataFrame:
@@ -32,16 +32,52 @@ class ILeaf(metaclass=abc.ABCMeta):
 
 class Leaf(ILeaf):
     """
+    Acts as a SignalHeap compatible wrapper for an ITForm object passing transformed
+    data from previous transformation
+    """
+
+    def __init__(self, tform: ITForm, key: str) -> None:
+        """
+        Init Leaf instance
+
+        :param tform: (ITForm) instance containing transformation logic to pass data to
+        :param key: (str) LeafHeap's unique name used to add its output to heap
+        """
+        self.tform = tform
+        self.__key = key
+
+    @property
+    def key(self) -> str:
+        """LeafHeap name used to add transformed data to heap"""
+        return self.__key
+
+    def build(self, data: pd.DataFrame, **heap: pd.DataFrame) -> pd.DataFrame:
+        """
+        Build each transformation passing either just the input dataframe or
+        mapping multiple dataframes from the additional heap (dict)
+
+        :param data: (pd.DataFrame) latest transformed data
+        :param heap: (pandas.DataFrame) dictionary of all data
+
+        :return: (pandas.DataFrame) transformed data
+        """
+
+        # Apply transformation & return
+        return self.tform.apply(data)
+
+
+class LeafHeap(ILeaf):
+    """
     Acts as a SignalHeap compatible wrapper for an ITForm object mapping
     data from the input heap
     """
 
     def __init__(self, tform: ITForm, key: str, mappings: List[str]) -> None:
         """
-        Init Leaf instance
+        Init LeafHeap instance
 
         :param tform: (ITForm) instance containing transformation logic to pass data to
-        :param key: (str) Leaf's unique name used to add its output to heap
+        :param key: (str) LeafHeap's unique name used to add its output to heap
         :param mappings: (list(str)) list of keys that map to dataframes in heap.  Data will
             be extracted from heap & passed to ITForm.apply in same order
             i.e. ITForm.apply(*[heap.get(x) for x in mappings if x in heap]).
@@ -58,7 +94,7 @@ class Leaf(ILeaf):
 
     @property
     def key(self) -> str:
-        """Leaf name used to add transformed data to heap"""
+        """LeafHeap name used to add transformed data to heap"""
         return self.__key
 
     def build(self, data: pd.DataFrame, **heap: pd.DataFrame) -> pd.DataFrame:
@@ -81,39 +117,3 @@ class Leaf(ILeaf):
 
         # Apply transformation & return
         return self.tform.apply(*mapped)
-
-
-class LeafSeries(ILeaf):
-    """
-    Acts as a SignalHeap compatible wrapper for an ITForm object passing transformed
-    data from previous transformation
-    """
-
-    def __init__(self, tform: ITForm, key: str) -> None:
-        """
-        Init LeafSeries instance
-
-        :param tform: (ITForm) instance containing transformation logic to pass data to
-        :param key: (str) Leaf's unique name used to add its output to heap
-        """
-        self.tform = tform
-        self.__key = key
-
-    @property
-    def key(self) -> str:
-        """Leaf name used to add transformed data to heap"""
-        return self.__key
-
-    def build(self, data: pd.DataFrame, **heap: pd.DataFrame) -> pd.DataFrame:
-        """
-        Build each transformation passing either just the input dataframe or
-        mapping multiple dataframes from the additional heap (dict)
-
-        :param data: (pd.DataFrame) latest transformed data
-        :param heap: (pandas.DataFrame) dictionary of all data
-
-        :return: (pandas.DataFrame) transformed data
-        """
-
-        # Apply transformation & return
-        return self.tform.apply(data)

@@ -13,7 +13,7 @@ from aspen.tform.generic import TForm, Merge
 from aspen.tform.pipeline import Pipeline
 from aspen.signals.core import ISignal
 from aspen.signals.generic import SignalHeap
-from aspen.signals.leaf import Leaf, LeafSeries
+from aspen.signals.leaf import LeafHeap, Leaf
 from aspen.library.signals.signals import SMean
 
 
@@ -76,14 +76,14 @@ class TestSignal(unittest.TestCase):
 
         # Build signal object passing various transformation objects
         sig = SignalHeap(
-            Leaf(
+            LeafHeap(
                 Pipeline(TForm("add", other=1), TForm("cumprod")),
                 "asset_tr",
                 ["returns"]
             ),
-            Leaf(Merge("div"), "eps", ["net_income", "shares"]),
-            Leaf(Merge("div"), "pe", ["asset_tr", "eps"]),
-            LeafSeries(Pipeline(TForm("rolling", window=3), TForm("mean")), "signal"),
+            LeafHeap(Merge("div"), "eps", ["net_income", "shares"]),
+            LeafHeap(Merge("div"), "pe", ["asset_tr", "eps"]),
+            Leaf(Pipeline(TForm("rolling", window=3), TForm("mean")), "signal"),
             data=self.data,
             name="test"
         )
@@ -101,7 +101,7 @@ class TestSignal(unittest.TestCase):
         """Test mapping not found raises exception"""
 
         sig = SignalHeap(
-            Leaf(
+            LeafHeap(
                 Pipeline(TForm("rolling", window=3), TForm("mean")),
                 "signal",
                 mappings=["asset_tr", "null"]
