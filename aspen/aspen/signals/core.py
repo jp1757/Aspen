@@ -1,5 +1,5 @@
 """
-Sets out the core Signal interface
+Sets out the core SignalHeap interface
 """
 
 import abc
@@ -9,7 +9,7 @@ import pandas as pd
 
 class ISignal(metaclass=abc.ABCMeta):
     """
-    Core Individual Signal Interface
+    Core Individual SignalHeap Interface
     """
 
     @property

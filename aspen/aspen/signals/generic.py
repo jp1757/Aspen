@@ -1,5 +1,5 @@
 """
-Provides a definition for a Signal object
+Provides a definition for a SignalHeap object
 """
 from typing import Dict
 
@@ -11,7 +11,33 @@ from aspen.signals.leaf import ILeaf
 
 class Signal(ISignal):
     """
-    Generic object for building signals from a group of transformations
+    Generic object for building signals from a group of transformations,
+    calculate from a single data object
+    """
+
+    def __init__(self, *leaves: ILeaf, data: pd.DataFrame, name: str) -> None:
+        self.leaves = leaves
+        self.data = data
+        self.__name = name
+
+    @property
+    def name(self) -> str:
+        """Unique signal id"""
+        return self.__name
+
+    def calculate(self) -> pd.DataFrame:
+        signal = self.data
+        for leaf in self.leaves:
+            # Apply transformation
+            signal = leaf.build(signal)
+
+        return signal
+
+
+class SignalHeap(ISignal):
+    """
+    Generic object for building signals from a group of transformations,
+    calculated from multiple data inputs
     """
 
     def __init__(self, *leaves: ILeaf, data: Dict[str, pd.DataFrame], name: str) -> None:

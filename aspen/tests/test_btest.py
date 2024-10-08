@@ -2,9 +2,14 @@
 Unit tests for backtest logic
 """
 
+import sys
+import os
+
 import unittest
 import pandas as pd
 import numpy as np
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from aspen.signals import ISignals
 from aspen.signals.generic import SignalDF, Signals
@@ -14,7 +19,7 @@ import aspen.library.pcr.quintile
 import aspen.backtest.portfolio
 import aspen.library.signals.normalise
 import aspen.library.tform
-import tests.utils
+import utils
 
 
 class SignalsDummy(ISignals):
@@ -55,7 +60,7 @@ class TestBTest(unittest.TestCase):
 
     def setUp(self):
         # Load dummy returns
-        self.dates, self.returns = tests.utils.returns(
+        self.dates, self.returns = utils.returns(
             "B", sdate=pd.Timestamp(year=2010, month=1, day=1)
         )
         self.tr = (1 + self.returns).cumprod()
@@ -99,7 +104,7 @@ class TestBTest(unittest.TestCase):
 
         # Test data
         dates = self.tr.index
-        zsc = {x: tests.utils.zsc(self.tr, x) for x in [3, 4]}
+        zsc = {x: utils.zsc(self.tr, x) for x in [3, 4]}
         signals = Signals(*[SignalDF(str(x), v) for x, v in zsc.items()])
         pcr = aspen.library.pcr.quintile.QuantileEW(long_bin=1, short_bin=3)
         normalise = aspen.library.signals.normalise.Quantile(
@@ -130,22 +135,22 @@ class TestPortfolio(unittest.TestCase):
 
     def setUp(self):
         # Load dummy data
-        self.dD, self.rD = tests.utils.returns(
+        self.dD, self.rD = utils.returns(
             "D", sdate=pd.Timestamp(year=2010, month=1, day=1)
         )
-        self.dB, self.rB = tests.utils.returns(
+        self.dB, self.rB = utils.returns(
             "B", sdate=pd.Timestamp(year=2010, month=1, day=1)
         )
-        self.dM, self.rM = tests.utils.returns(
+        self.dM, self.rM = utils.returns(
             "M", sdate=pd.Timestamp(year=2010, month=1, day=1)
         )
-        self.dBM, self.rBM = tests.utils.returns(
+        self.dBM, self.rBM = utils.returns(
             "BM", sdate=pd.Timestamp(year=2010, month=1, day=1)
         )
-        self.dBMoffset, self.rBMoffset = tests.utils.returns(
+        self.dBMoffset, self.rBMoffset = utils.returns(
             "BM", sdate=pd.Timestamp(year=2010, month=3, day=1), months=6
         )
-        self.dW, self.rW = tests.utils.returns(
+        self.dW, self.rW = utils.returns(
             "W", sdate=pd.Timestamp(year=2010, month=3, day=1)
         )
 

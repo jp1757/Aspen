@@ -1,5 +1,5 @@
 """
-Signal interface implementations
+SignalHeap interface implementations
 """
 
 import pandas as pd

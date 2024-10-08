@@ -1,0 +1,5 @@
+pandas~=1.5.3
+aspen~=1.0.0
+matplotlib~=3.7.0
+numpy~=1.23.5
+scikit-learn~=1.2.1
