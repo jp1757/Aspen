@@ -2,6 +2,8 @@
 Unit tests for backtest logic
 """
 
+from typing import List
+
 import os
 import sys
 import unittest
@@ -9,9 +11,9 @@ import unittest
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from aspen.signals import ISignals
+from aspen.signals import ISignal, ISignals
 from aspen.signals.generic import SignalDF, Signals
 from aspen.pcr import IPortConstruct
 from aspen.backtest.generic import BTest
@@ -31,6 +33,11 @@ class SignalsDummy(ISignals):
         self.data = data
         self.data.dropna(how="all", inplace=True)
 
+    @property
+    def signals(self) -> List[ISignal]:
+        """Return list of individual signals"""
+        return []
+
     def build(self, name: str = None) -> pd.DataFrame:
         """
         Serve up signal data by either combining multiple signals or
@@ -49,7 +56,7 @@ class PCRProp(IPortConstruct):
     """
 
     def weights(
-            self, *, date: pd.Timestamp, signals: pd.DataFrame, asset: pd.DataFrame
+        self, *, date: pd.Timestamp, signals: pd.DataFrame, asset: pd.DataFrame
     ) -> pd.Series:
         s = signals.iloc[-1]
         return s.divide(s.sum(), axis=0)
@@ -82,7 +89,7 @@ class TestBTest(unittest.TestCase):
             dates=self.dates,
             tr=self.tr,
             signals=SignalsDummy(data=self.sig_df),
-            pcr=PCRProp()
+            pcr=PCRProp(),
         )
         btdf = btest.run()
 
@@ -119,7 +126,7 @@ class TestBTest(unittest.TestCase):
             signals=signals,
             pcr=pcr,
             normalise=normalise,
-            signal="3"
+            signal="3",
         )
         wgts = btest.run()
         summed = wgts.abs().sum(axis=1)
@@ -177,13 +184,13 @@ class TestPortfolio(unittest.TestCase):
         df = pd.concat(
             [
                 tr.rename(columns=dict(zip(tr.columns, tr_cols))),
-                wgts.rename(columns=dict(zip(wgts.columns, wgt_cols)))
+                wgts.rename(columns=dict(zip(wgts.columns, wgt_cols))),
             ],
-            axis=1
+            axis=1,
         )
         df = df.ffill().loc[wgts.index]
-        df[ret_cols] = df[tr_cols].pct_change().rename(
-            columns=dict(zip(tr.columns, ret_cols))
+        df[ret_cols] = (
+            df[tr_cols].pct_change().rename(columns=dict(zip(tr.columns, ret_cols)))
         )
         df[ret_shift_cols] = df[ret_cols].shift(-1)
         w = df[wgt_cols].rename(
@@ -191,7 +198,10 @@ class TestPortfolio(unittest.TestCase):
         )
         ret = df[ret_shift_cols].rename(
             columns=dict(
-                zip(ret_shift_cols, [x.replace("_tr_ret_-1", "") for x in ret_shift_cols])
+                zip(
+                    ret_shift_cols,
+                    [x.replace("_tr_ret_-1", "") for x in ret_shift_cols],
+                )
             )
         )
         p_ret = w * ret
@@ -248,8 +258,10 @@ class TestPortfolio(unittest.TestCase):
         df = pd.concat([_wgt, _tr], axis=1).ffill().dropna(how="all", subset=wgt_cols)
         df[ret_cols] = df[tr_cols].pct_change()
         df[retshift_cols] = df[ret_cols].shift(-1)
-        df[pret_cols] = df[wgt_cols].rename(columns=dict(zip(wgt_cols, tr.columns))).mul(
-            df[retshift_cols].rename(columns=dict(zip(retshift_cols, tr.columns)))
+        df[pret_cols] = (
+            df[wgt_cols]
+            .rename(columns=dict(zip(wgt_cols, tr.columns)))
+            .mul(df[retshift_cols].rename(columns=dict(zip(retshift_cols, tr.columns))))
         )
         df["pret_-1"] = df[pret_cols].sum(axis=1, min_count=1)
 
@@ -340,42 +352,69 @@ class TestPortfolio(unittest.TestCase):
         """Test end-to-end from signal to returns"""
 
         # Build dummy data
-        svals = [0., 1., 1., 1., 1., 1., 1., -1., -1., -1., -1., -1., -1., 1., 1.]
+        svals = [
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            1.0,
+            1.0,
+        ]
         sig = pd.Series(
             data=svals,
             index=pd.date_range(
-                start='2000-01-07', end='2000-01-27', freq='B', name='date'
+                start="2000-01-07", end="2000-01-27", freq="B", name="date"
             ),
-            name="asset"
+            name="asset",
         ).to_frame()
 
         trvals = [
-            5106.4, 5001.4, 4939.3, 4972.8, 5057.3, 4981.2, 5000.2, 4991.1, 5093.1,
-            5104.5, 4957.2, 4921.1, 4844.2, 4843.4, 4872.3, 4780.2, 4879.9, 4905.8
+            5106.4,
+            5001.4,
+            4939.3,
+            4972.8,
+            5057.3,
+            4981.2,
+            5000.2,
+            4991.1,
+            5093.1,
+            5104.5,
+            4957.2,
+            4921.1,
+            4844.2,
+            4843.4,
+            4872.3,
+            4780.2,
+            4879.9,
+            4905.8,
         ]
         tr = pd.Series(
             data=trvals,
             index=pd.date_range(
-                start='2000-01-04', end='2000-01-27', freq='B', name='date'
+                start="2000-01-04", end="2000-01-27", freq="B", name="date"
             ),
-            name="asset"
+            name="asset",
         ).to_frame()
 
         # Define dummy portfolio construction object
         class _PCR(IPortConstruct):
             def weights(
-                    self, *, date: pd.Timestamp, signals: pd.DataFrame,
-                    asset: pd.DataFrame
+                self, *, date: pd.Timestamp, signals: pd.DataFrame, asset: pd.DataFrame
             ) -> pd.Series:
                 return signals.iloc[-1]
 
         # Build backtest object
         btest = BTest(
-            name="test",
-            dates=sig.index,
-            tr=tr,
-            signals=SignalsDummy(sig),
-            pcr=_PCR()
+            name="test", dates=sig.index, tr=tr, signals=SignalsDummy(sig), pcr=_PCR()
         )
 
         # Build portfolio
@@ -386,12 +425,25 @@ class TestPortfolio(unittest.TestCase):
         # Test data
         tvals = pd.Series(
             data=[
-                0, 0, 0.003814, 0.001987, 0.022464, 0.024753, -0.004818, -0.012065,
-                0.003373, 0.003538, -0.00245, 0.016407, -0.004792, -0.010074
+                0,
+                0,
+                0.003814,
+                0.001987,
+                0.022464,
+                0.024753,
+                -0.004818,
+                -0.012065,
+                0.003373,
+                0.003538,
+                -0.00245,
+                0.016407,
+                -0.004792,
+                -0.010074,
             ],
-            index=pd.date_range(start='2000-01-10', end='2000-01-27', freq='B')
+            index=pd.date_range(start="2000-01-10", end="2000-01-27", freq="B"),
         )
 
         # Assertion statement
-        pd.testing.assert_series_equal(tvals, port.tr - 1, check_less_precise=6,
-                                       check_names=False)
+        pd.testing.assert_series_equal(
+            tvals, port.tr - 1, check_less_precise=6, check_names=False
+        )
