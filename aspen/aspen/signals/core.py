@@ -3,6 +3,7 @@ Sets out the core SignalHeap interface
 """
 
 import abc
+from typing import List
 
 import pandas as pd
 
@@ -32,6 +33,12 @@ class ISignals(metaclass=abc.ABCMeta):
     Sets out a structure for normalising & then combining
     multiple individual signal (ISignal) objects.
     """
+
+    @property
+    @abc.abstractmethod
+    def signals(self) -> List[ISignal]:
+        """Return list of individual signals"""
+        pass
 
     @abc.abstractmethod
     def build(self, name: str = None) -> pd.DataFrame:

@@ -1,7 +1,8 @@
 """
 Provides a definition for a SignalHeap object
 """
-from typing import Dict
+
+from typing import Dict, List
 
 import pandas as pd
 
@@ -40,7 +41,9 @@ class SignalHeap(ISignal):
     calculated from multiple data inputs
     """
 
-    def __init__(self, *leaves: ILeaf, data: Dict[str, pd.DataFrame], name: str) -> None:
+    def __init__(
+        self, *leaves: ILeaf, data: Dict[str, pd.DataFrame], name: str
+    ) -> None:
         self.leaves = leaves
         self.data = data
         self.__name = name
@@ -92,6 +95,11 @@ class Signals(ISignals):
             raise ValueError(
                 f"Duplicate signal name suspected: {[s.name for s in signals]}"
             )
+
+    @property
+    def signals(self) -> List[ISignal]:
+        """Return list of individual signals"""
+        return list(self._signals.values())
 
     def _combine(self) -> pd.DataFrame:
         """Override this function with specific signal combination logic"""
