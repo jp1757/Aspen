@@ -7,32 +7,13 @@ import unittest
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from aspen.tform.generic import TForm, Merge
 from aspen.tform.pipeline import Pipeline
-from aspen.signals.core import ISignal
-from aspen.signals.generic import SignalHeap
+from aspen.signals.generic import SignalHeap, SignalDF
 from aspen.signals.leaf import LeafHeap, Leaf
 from aspen.library.signals.signals import SMean
-
-
-class DummySignal(ISignal):
-
-    def __init__(self, name: str, data: pd.DataFrame) -> None:
-        self._name = name
-        self.data = data
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    def calculate(self) -> pd.DataFrame:
-        """
-        Calculate a signal object & return data
-        :return: pd.DataFrame
-        """
-        return self.data
 
 
 class TestSignal(unittest.TestCase):
@@ -44,28 +25,30 @@ class TestSignal(unittest.TestCase):
         returns = pd.DataFrame(
             np.random.rand(len(dates), len(stocks)),
             index=pd.Index(dates, name="date"),
-            columns=stocks
+            columns=stocks,
         )
         returns.iloc[0] = 0
 
         # Create random fundamentals
-        net_income = pd.DataFrame(
-            np.random.rand(len(dates), len(stocks)),
-            index=pd.Index(dates, name="date"),
-            columns=stocks
-        ) * 1e6
-        shares = pd.DataFrame(
-            np.random.rand(len(dates), len(stocks)),
-            index=pd.Index(dates, name="date"),
-            columns=stocks
-        ) * 1e7
+        net_income = (
+            pd.DataFrame(
+                np.random.rand(len(dates), len(stocks)),
+                index=pd.Index(dates, name="date"),
+                columns=stocks,
+            )
+            * 1e6
+        )
+        shares = (
+            pd.DataFrame(
+                np.random.rand(len(dates), len(stocks)),
+                index=pd.Index(dates, name="date"),
+                columns=stocks,
+            )
+            * 1e7
+        )
 
         # Data heap
-        self.data = {
-            "returns": returns,
-            "net_income": net_income,
-            "shares": shares
-        }
+        self.data = {"returns": returns, "net_income": net_income, "shares": shares}
 
     def test_signal_leaves(self):
         """
@@ -79,13 +62,13 @@ class TestSignal(unittest.TestCase):
             LeafHeap(
                 Pipeline(TForm("add", other=1), TForm("cumprod")),
                 "asset_tr",
-                ["returns"]
+                ["returns"],
             ),
             LeafHeap(Merge("div"), "eps", ["net_income", "shares"]),
             LeafHeap(Merge("div"), "pe", ["asset_tr", "eps"]),
             Leaf(Pipeline(TForm("rolling", window=3), TForm("mean")), "signal"),
             data=self.data,
-            name="test"
+            name="test",
         )
         signal = sig.calculate()
 
@@ -104,10 +87,10 @@ class TestSignal(unittest.TestCase):
             LeafHeap(
                 Pipeline(TForm("rolling", window=3), TForm("mean")),
                 "signal",
-                mappings=["asset_tr", "null"]
+                mappings=["asset_tr", "null"],
             ),
             data={"asset_tr": (1 + self.data["returns"]).cumprod()},
-            name="test"
+            name="test",
         )
 
         with self.assertRaises(Exception) as context:
@@ -115,7 +98,9 @@ class TestSignal(unittest.TestCase):
 
         print(str(context))
 
-        self.assertTrue("Mappings not found in heap: {'null'}" in str(context.exception))
+        self.assertTrue(
+            "Mappings not found in heap: {'null'}" in str(context.exception)
+        )
 
 
 class TestSignals(unittest.TestCase):
@@ -126,21 +111,19 @@ class TestSignals(unittest.TestCase):
     def setUp(self):
         self.bins = pd.DataFrame(
             [[1, 3, 3, 1, 2, 2, 1], [1, 1, 2, 2, 3, 3, 1]],
-            columns=['aapl', 'msft', 'tsla', 'vod', 'eon', 'meta', 'amzn'],
+            columns=["aapl", "msft", "tsla", "vod", "eon", "meta", "amzn"],
             index=pd.DatetimeIndex(
-                ['2010-03-31', '2010-04-30'], dtype='datetime64[ns]', name='date'
-            )
+                ["2010-03-31", "2010-04-30"], dtype="datetime64[ns]", name="date"
+            ),
         )
 
     def test_smean(self):
         """Test SMean object"""
-        smean = SMean(
-            DummySignal("bins1", self.bins), DummySignal("bins2", self.bins + 1)
-        )
+        smean = SMean(SignalDF("bins1", self.bins), SignalDF("bins2", self.bins + 1))
         build = smean.build()
 
         pd.testing.assert_series_equal(
             build.iloc[0].sort_index(),
-            ((self.bins.iloc[0] + self.bins.iloc[0] + 1) / 2).sort_index()
+            ((self.bins.iloc[0] + self.bins.iloc[0] + 1) / 2).sort_index(),
         )
         pd.testing.assert_frame_equal(self.bins, smean.build("bins1"))

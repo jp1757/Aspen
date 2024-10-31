@@ -13,8 +13,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from aspen.signals import ISignal, ISignals
-from aspen.signals.generic import SignalDF, Signals
+from aspen.signals.generic import SignalDF, Signals, SignalsDF
 from aspen.pcr import IPortConstruct
 from aspen.backtest.generic import BTest
 import aspen.library.pcr.quintile
@@ -22,32 +21,6 @@ import aspen.backtest.portfolio
 import aspen.library.signals.normalise
 import aspen.library.tform
 import utils
-
-
-class SignalsDummy(ISignals):
-    """
-    Dummy signal combination object to be used with tests
-    """
-
-    def __init__(self, data: pd.DataFrame) -> None:
-        self.data = data
-        self.data.dropna(how="all", inplace=True)
-
-    @property
-    def signals(self) -> List[ISignal]:
-        """Return list of individual signals"""
-        return []
-
-    def build(self, name: str = None) -> pd.DataFrame:
-        """
-        Serve up signal data by either combining multiple signals or
-        returning a specific signal by setting the 'name' parameter
-
-        :param name: (str, optional) name of signal to return
-        :return: pd.DataFrame of signal data indexed by date with columns set
-            to asset ids
-        """
-        return self.data
 
 
 class PCRProp(IPortConstruct):
@@ -75,7 +48,7 @@ class TestBTest(unittest.TestCase):
         # Build dummy signal data
         m = self.returns.rolling(3).mean()
         sd = self.returns.rolling(3).std()
-        self.sig_df = (self.returns - m) / sd
+        self.sig_df = ((self.returns - m) / sd).dropna(how="all")
 
     def test_weights(self):
         """
@@ -88,7 +61,7 @@ class TestBTest(unittest.TestCase):
             "test",
             dates=self.dates,
             tr=self.tr,
-            signals=SignalsDummy(data=self.sig_df),
+            signals=SignalsDF(name="test", data=self.sig_df),
             pcr=PCRProp(),
         )
         btdf = btest.run()
@@ -414,7 +387,11 @@ class TestPortfolio(unittest.TestCase):
 
         # Build backtest object
         btest = BTest(
-            name="test", dates=sig.index, tr=tr, signals=SignalsDummy(sig), pcr=_PCR()
+            name="test",
+            dates=sig.index,
+            tr=tr,
+            signals=SignalsDF(name="test", data=sig),
+            pcr=_PCR(),
         )
 
         # Build portfolio
