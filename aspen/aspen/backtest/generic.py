@@ -66,6 +66,7 @@ class BTest(IBTest):
         wgt_df = pd.concat(weights, axis=1).T.dropna(how="all")
         wgt_df.index = pd.to_datetime(wgt_df.index)
         wgt_df.index.freq = pd.infer_freq(wgt_df.index)
+        wgt_df.index.name = signals.index.name
         wgt_df.name = self.name
 
         # Shift weights forward 1-step
