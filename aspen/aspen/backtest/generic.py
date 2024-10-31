@@ -1,6 +1,7 @@
 """
 Generic backtest object
 """
+
 import pandas as pd
 
 from aspen.backtest.core import IBTest
@@ -17,15 +18,15 @@ class BTest(IBTest):
     """
 
     def __init__(
-            self,
-            name: str,
-            *,
-            dates: pd.DatetimeIndex,
-            tr: pd.DataFrame,
-            signals: ISignals,
-            pcr: IPortConstruct,
-            normalise: INormalise = None,
-            signal: str = None,
+        self,
+        name: str,
+        *,
+        dates: pd.DatetimeIndex,
+        tr: pd.DataFrame,
+        signals: ISignals,
+        pcr: IPortConstruct,
+        normalise: INormalise = None,
+        signal: str = None,
     ) -> None:
         # Store instance vars
         self._name = name
@@ -57,14 +58,13 @@ class BTest(IBTest):
             signals = self.normalise.norm(signals)
 
         weights = [
-            self.pcr.weights(
-                date=d, signals=signals.loc[:d], asset=self.tr.loc[:d]
-            )
+            self.pcr.weights(date=d, signals=signals.loc[:d], asset=self.tr.loc[:d])
             for d in self.dates
             if len(signals.loc[:d]) > 0
         ]
 
-        wgt_df = pd.concat(weights, axis=1).T
+        wgt_df = pd.concat(weights, axis=1).T.dropna(how="all")
+        wgt_df.index = pd.to_datetime(wgt_df.index)
         wgt_df.index.freq = pd.infer_freq(wgt_df.index)
         wgt_df.name = self.name
 
