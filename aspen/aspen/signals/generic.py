@@ -88,7 +88,7 @@ class Signals(ISignals):
     Access them by passing the signal name to build function
     """
 
-    def __init__(self, *signals: ISignal):
+    def __init__(self, *signals: ISignal) -> None:
 
         self._signals = {s.name: s for s in signals}
         if len(signals) > len(self._signals):
@@ -121,3 +121,34 @@ class Signals(ISignals):
             return self._combine()
         else:
             return self._signals[name].calculate()
+
+
+class SignalsDF(ISignals):
+    """
+    Store & return a pre-calculated signals dataframe
+    """
+
+    def __init__(self, name: str, data: pd.DataFrame) -> None:
+        """
+        Init object and store data
+        :param name: (str) name of signal data
+        :param data: (pd.DataFrame) signal data
+        """
+        self.name = name
+        self.data = data
+
+    @property
+    def signals(self) -> List[ISignal]:
+        """Return list of individual signals"""
+        return [SignalDF(name=self.name, data=self.data)]
+
+    def build(self, name: str = None) -> pd.DataFrame:
+        """
+        Serve up signal data by setting the 'name' parameter
+
+        :param name: (str, optional) name of signal to return
+        :return: pd.DataFrame of signal data indexed by date with columns set
+            to asset ids
+        """
+
+        return self.data
