@@ -426,7 +426,7 @@ class TestPortfolio(unittest.TestCase):
         )
 
     def test_fx_adj(self):
-        """Test fx adjustment of asset total return prices"""
+        """Test fx_trp adjustment of asset total return prices"""
 
         # Test data
         atr = utils.returns(freq="M", stocks=["aapl", "msft", "vod", "bmw"])[1] + 1
