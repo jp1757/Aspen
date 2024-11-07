@@ -426,7 +426,7 @@ class TestPortfolio(unittest.TestCase):
         )
 
     def test_fx_adj(self):
-        """Test fx_trp adjustment of asset total return prices"""
+        """Test fx_tr adjustment of asset total return prices"""
 
         # Test data
         atr = utils.returns(freq="M", stocks=["aapl", "msft", "vod", "bmw"])[1] + 1
@@ -469,3 +469,69 @@ class TestPortfolio(unittest.TestCase):
         # Run assertion statements
         pd.testing.assert_frame_equal(test_a, target_a)
         pd.testing.assert_frame_equal(test_b, target_b)
+
+    def test_fx_port(self):
+        """Test portfolio end-to-end with FX adjustment"""
+
+        # Declare test data
+        dts_td = pd.date_range(end=pd.Timestamp.now().date(), periods=5, name="date")
+        fx_td = pd.DataFrame(
+            zip(
+                [0.7594, 0.7618, 0.7607, 0.7626, 0.7606],
+                [0.9027, 0.9051, 0.9032, 0.9055, 0.9023],
+            ),
+            index=dts_td,
+            columns=["GBP", "EUR"],
+        )
+        asset_td = pd.DataFrame(
+            zip(
+                [3725.6, 3721.3, 3697, 3723.4, 3747],
+                [19126.51, 19127.52, 19142.66, 18969.05, 18798.48],
+                [5671.04, 5722.59, 5722.59, 5602.04, 5590.16],
+            ),
+            index=dts_td,
+            columns=["Z", "GX", "ES"],
+        )
+        wgts_td = pd.DataFrame(
+            zip(
+                [0.25, 0.2, 0.1, 0.25, 0.5],
+                [0.35, 0.3, 0.5, 0.25, 0.15],
+                [0.4, 0.5, 0.4, 0.5, 0.35],
+            ),
+            index=dts_td,
+            columns=["Z", "GX", "ES"],
+        )
+        fx_map_td = {"Z": "GBP", "GX": "EUR", "ES": "USD"}
+
+        # Init portfolio objects - 1st base currency denominated USD/x,
+        # 2nd other way around x/USD
+        port = aspen.backtest.portfolio.Portfolio(
+            "test",
+            asset_tr=asset_td,
+            weights=wgts_td,
+            fx="USD",
+            base_denominated=True,
+            fx_tr=fx_td,
+            fx_map=fx_map_td,
+        )
+        port_nonb = aspen.backtest.portfolio.Portfolio(
+            "test",
+            asset_tr=asset_td,
+            weights=wgts_td,
+            fx="USD",
+            base_denominated=False,
+            fx_tr=1 / fx_td,
+            fx_map=fx_map_td,
+        )
+
+        # Target test data
+        target = [
+            0.00165113294204722,
+            -0.000149628531359913,
+            -0.0137562235269713,
+            -0.000183565827636567,
+        ]
+
+        # Assertion statements
+        np.testing.assert_array_almost_equal(port.returns.dropna().values, target)
+        np.testing.assert_array_almost_equal(port_nonb.returns.dropna().values, target)

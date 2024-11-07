@@ -66,7 +66,7 @@ def fx_adjust(
     fx_map: Dict[str, str],
 ) -> pd.DataFrame:
 
-    # Check all assets in fx_trp map
+    # Check all assets in fx_tr map
     asset_diff = set(asset_tr.columns) - set(fx_map.keys())
     if len(asset_diff) > 0:
         raise ValueError(
@@ -74,7 +74,7 @@ def fx_adjust(
             f"Assets not found: {asset_diff}"
         )
 
-    # Re-index total return prices & fx_trp to align with dates
+    # Re-index total return prices & fx_tr to align with dates
     _asset_tr = Align(dates, fillforward=True).apply(asset_tr)
     # Add a value of 1 for the base currency
     _fx = fx.copy()
@@ -83,7 +83,7 @@ def fx_adjust(
     # Build dataframe of FX mapping to asset names
     _fx_map = pd.concat([pd.Series(_fx[y], name=x) for x, y in fx_map.items()], axis=1)
 
-    # Adjust the asset total return prices by fx_trp values
+    # Adjust the asset total return prices by fx_tr values
     if base_denominated:
         return _asset_tr.div(_fx_map, axis=1)
     else:
@@ -104,7 +104,7 @@ class Portfolio(object):
         weights: pd.DataFrame,
         fx: str = None,
         base_denominated: bool = None,
-        fx_trp: pd.DataFrame = None,
+        fx_tr: pd.DataFrame = None,
         fx_map: Dict[str, str] = None,
     ) -> None:
         """
@@ -130,31 +130,32 @@ class Portfolio(object):
         self.asset_tr = asset_tr[self.weights.columns].copy()
 
         # FX Adjustments
-        self.fx_base = fx
+        self.fx = fx
         self.base_denominated = base_denominated
-        self.fx = fx_trp
+        self.fx_tr = fx_tr
         self.fx_map = fx_map
-        fx_params = [fx, base_denominated, fx_trp, fx_map]
+        fx_params = [fx, base_denominated, fx_tr, fx_map]
         params_set = sum([1 for x in fx_params if x is not None])
         if params_set == 4:
+            self.asset_tr_local = self.asset_tr
             self.asset_tr = fx_adjust(
                 base=fx,
                 base_denominated=base_denominated,
                 dates=weights.index,
-                asset_tr=asset_tr,
-                fx=fx_trp,
+                asset_tr=self.asset_tr.copy(),
+                fx=fx_tr,
                 fx_map=fx_map,
             )
 
         elif params_set > 0:
             raise ValueError(
-                "Please set all fx_trp related params to apply an fx_trp adjustment to asset "
-                "total returns"
+                "Please set all fx_tr related params to apply an fx_tr adjustment to "
+                "asset total returns"
             )
 
         # Calculate returns
         self.__ret, self.__tr = returns(
-            dates=weights.index, weights=weights, asset_tr=asset_tr
+            dates=weights.index, weights=weights, asset_tr=self.asset_tr
         )
         self.__ret.name = name
         self.__tr.name = name
