@@ -7,8 +7,8 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
-from aspen.library.tform.align import Align
 import aspen.stats.library.scalar
+from aspen.library.tform.align import Align
 
 
 def __check(tr: pd.Series, func: str):
@@ -176,7 +176,8 @@ def drawdown(tr: pd.Series, *, periods: int = None, rfr: float = 0.0) -> pd.Seri
     return tr / tr.expanding().max() - 1
 
 
-def turnover(weights: pd.DataFrame, *, periods: int, drifted: pd.DataFrame = None) -> float:
+def turnover(weights: pd.DataFrame, *, periods: int,
+             drifted: pd.DataFrame = None) -> float:
     """
     Calculate the total two-sided turnover average per year.  Buys + sells.
 

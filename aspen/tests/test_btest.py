@@ -424,3 +424,48 @@ class TestPortfolio(unittest.TestCase):
         pd.testing.assert_series_equal(
             tvals, port.tr - 1, check_less_precise=6, check_names=False
         )
+
+    def test_fx_adj(self):
+        """Test fx adjustment of asset total return prices"""
+
+        # Test data
+        atr = utils.returns(freq="M", stocks=["aapl", "msft", "vod", "bmw"])[1] + 1
+        fx = (
+            utils.returns(
+                freq="B", sdate=pd.Timestamp(2010, 3, 31), stocks=["GBP", "EUR"]
+            )[1]
+            + 1
+        )
+        fx_map = {"aapl": "USD", "msft": "USD", "vod": "GBP", "bmw": "EUR"}
+
+        # Call target function
+        target_a = aspen.backtest.portfolio.fx_adjust(
+            base="USD",
+            base_denominated=True,
+            dates=atr.index,
+            asset_tr=atr,
+            fx=fx,
+            fx_map=fx_map,
+        )
+        target_b = aspen.backtest.portfolio.fx_adjust(
+            base="USD",
+            base_denominated=False,
+            dates=atr.index,
+            asset_tr=atr,
+            fx=fx,
+            fx_map=fx_map,
+        )
+
+        # Calculate test data
+        fx["USD"] = 1
+        fx = fx.reindex(atr.index, method="ffill")
+        test_a = pd.concat(
+            [pd.Series(y.div(fx[fx_map[x]]), name=x) for x, y in atr.items()], axis=1
+        )
+        test_b = pd.concat(
+            [pd.Series(y.mul(fx[fx_map[x]]), name=x) for x, y in atr.items()], axis=1
+        )
+
+        # Run assertion statements
+        pd.testing.assert_frame_equal(test_a, target_a)
+        pd.testing.assert_frame_equal(test_b, target_b)
