@@ -3,6 +3,7 @@ Generic backtest object
 """
 
 import pandas as pd
+import functools
 
 from aspen.backtest.core import IBTest
 from aspen.signals.core import ISignals, INormalise
@@ -44,6 +45,7 @@ class BTest(IBTest):
         """Unique backtest id"""
         return self._name
 
+    @functools.lru_cache(maxsize=None)
     def run(self) -> pd.DataFrame:
         """
         Run backtest looping through input dates

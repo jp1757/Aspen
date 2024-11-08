@@ -176,8 +176,9 @@ def drawdown(tr: pd.Series, *, periods: int = None, rfr: float = 0.0) -> pd.Seri
     return tr / tr.expanding().max() - 1
 
 
-def turnover(weights: pd.DataFrame, *, periods: int,
-             drifted: pd.DataFrame = None) -> float:
+def turnover(
+        weights: pd.DataFrame, *, periods: int, drifted: pd.DataFrame = None
+) -> float:
     """
     Calculate the total two-sided turnover average per year.  Buys + sells.
 

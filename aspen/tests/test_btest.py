@@ -191,7 +191,7 @@ class TestPortfolio(unittest.TestCase):
         p_ret = p_ret.iloc[start_idx:].copy()
 
         # Run returns function
-        ret_act, tr_act = aspen.backtest.portfolio.returns(
+        ret_act, tr_act, asset_act = aspen.backtest.portfolio.returns(
             dates=wgts.index, weights=wgts, asset_tr=tr
         )
 
