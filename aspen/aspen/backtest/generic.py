@@ -8,7 +8,7 @@ import functools
 from aspen.backtest.core import IBTest
 from aspen.signals.core import ISignals, INormalise
 from aspen.pcr.core import IPortConstruct
-from aspen.pcr.rebalance import IRebal, AllDates
+from aspen.rebalance.core import IRebal, AllDates
 
 from aspen.library.tform.align import Reindex
 
