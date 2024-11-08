@@ -15,7 +15,7 @@ def returns(
     dates: pd.DatetimeIndex,
     weights: pd.DataFrame,
     asset_tr: pd.DataFrame,
-) -> Tuple[pd.Series, pd.Series]:
+) -> Tuple[pd.Series, pd.Series, pd.DataFrame]:
     """
     Calculate portfolio returns from asset weights & asset total return prices
 
@@ -24,7 +24,9 @@ def returns(
     :param asset_tr: (pd.DataFrame) asset total return prices, with index set to dates &
         columns assets
 
-    :return: (Tuple[pd.Series, pd.Series]) portfolio returns, portfolio total returns
+    :return:
+        (Tuple[pd.Series, pd.Series, pd.DataFrame])
+        portfolio returns, portfolio total returns, asset portfolio returns
     """
     # Re-index total return prices & weights to align with dates
     weights = Align(dates, fillforward=True).apply(weights)
@@ -34,13 +36,13 @@ def returns(
     _returns = asset_tr.pct_change().shift(-1)
 
     # Multiply by weights & sum for portfolio returns
-    port = _returns * weights
+    asset_port_ret = _returns * weights
 
     # Shift returns forward to re-align with correct period
-    port = port.shift(1)
+    asset_port_ret = asset_port_ret.shift(1)
 
     # Sum returns across assets for portfolio return ensuring at least one non-nan value
-    port = port.sum(axis=1, min_count=1)
+    port = asset_port_ret.sum(axis=1, min_count=1)
 
     # Drop leading successive NaNs leaving one
     start_key = port.isna().cumsum().diff().idxmin()
@@ -53,7 +55,7 @@ def returns(
 
     port.iloc[0] = np.NaN
 
-    return port, tr
+    return port, tr, asset_port_ret
 
 
 def fx_adjust(
@@ -154,7 +156,7 @@ class Portfolio(object):
             )
 
         # Calculate returns
-        self.__ret, self.__tr = returns(
+        self.__ret, self.__tr, self.__asset_port_ret = returns(
             dates=weights.index, weights=weights, asset_tr=self.asset_tr
         )
         self.__ret.name = name
@@ -182,6 +184,16 @@ class Portfolio(object):
         """Returns a series of portfolio total return prices indexed by date"""
         return self.__tr
 
+    @property
+    def asset_port_returns(self):
+        """Return the portfolio returns split by assets"""
+        return self.__asset_port_ret
+
+    @property
+    def asset_port_tr(self):
+        """Return the portfolio total return index split by asset"""
+        return (1 + self.__asset_port_ret.fillna(0)).cumprod()
+
     def drift(self, asset_tr: pd.DataFrame) -> pd.DataFrame:
         """
         Calculate drifted asset portfolio weights
@@ -208,7 +220,7 @@ class Portfolio(object):
 
         # Calculate returns indexed to higher frequency asset returns filling forward
         # the static weight from the previous period
-        _ret, _tr = returns(dates=dates, weights=self.weights, asset_tr=asset_tr)
+        _ret, _tr, _asset = returns(dates=dates, weights=self.weights, asset_tr=asset_tr)
 
         # Align weights with asset total return prices
         weights = Align(dates, fillforward=True).apply(self.weights)
