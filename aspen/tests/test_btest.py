@@ -2,8 +2,6 @@
 Unit tests for backtest logic
 """
 
-from typing import List
-
 import os
 import sys
 import unittest
