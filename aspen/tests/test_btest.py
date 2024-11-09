@@ -2,8 +2,6 @@
 Unit tests for backtest logic
 """
 
-from typing import List
-
 import os
 import sys
 import unittest
@@ -250,7 +248,9 @@ class TestPortfolio(unittest.TestCase):
         port = aspen.backtest.portfolio.Portfolio("test", asset_tr=tr, weights=wgts)
 
         # Run assertion statements
-        pd.testing.assert_frame_equal(port.drift(tr), drift)
+        pd.testing.assert_frame_equal(
+            aspen.backtest.portfolio.drift(asset_tr=tr, weights=wgts), drift
+        )
 
     def test_monthly(self):
         """
@@ -299,13 +299,6 @@ class TestPortfolio(unittest.TestCase):
         """
 
         self.returns(returns=self.rBMoffset, weights=self.rM)
-
-    def test_drift(self):
-        """
-        Test weights are drifted correctly using business month-end weights &
-        business day asset total return prices
-        """
-        self.drift(returns=self.rB, weights=self.rBM)
 
     def test_drift(self):
         """

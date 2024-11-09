@@ -1,6 +1,7 @@
 """Interface for portfolio construction objects"""
 
 import abc
+
 import pandas as pd
 
 
@@ -12,7 +13,11 @@ class IPortConstruct(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def weights(
-            self, *, date: pd.Timestamp, signals: pd.DataFrame, asset: pd.DataFrame,
+        self,
+        *,
+        date: pd.Timestamp,
+        signals: pd.DataFrame,
+        asset: pd.DataFrame,
     ) -> pd.Series:
         """
         Get weights for latest date

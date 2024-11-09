@@ -8,6 +8,7 @@ import functools
 from aspen.backtest.core import IBTest
 from aspen.signals.core import ISignals, INormalise
 from aspen.pcr.core import IPortConstruct
+from aspen.rebalance.core import IRebal, AllDates
 
 from aspen.library.tform.align import Reindex
 
@@ -27,6 +28,7 @@ class BTest(IBTest):
         signals: ISignals,
         pcr: IPortConstruct,
         normalise: INormalise = None,
+        rebalance: IRebal = None,
         signal: str = None,
     ) -> None:
         # Store instance vars
@@ -34,6 +36,7 @@ class BTest(IBTest):
         self.dates = dates
         self.signals = signals
         self.pcr = pcr
+        self.rebalance = rebalance
         self.normalise = normalise
         self.signal = signal
 
@@ -59,10 +62,16 @@ class BTest(IBTest):
         if self.normalise is not None:
             signals = self.normalise.norm(signals)
 
+        # Set rebalance object
+        rebalance = AllDates() if self.rebalance is None else self.rebalance
+
         weights = [
             self.pcr.weights(date=d, signals=signals.loc[:d], asset=self.tr.loc[:d])
             for d in self.dates
-            if len(signals.loc[:d]) > 0
+            if (len(signals.loc[:d]) > 0)
+            and rebalance.rebalance(
+                date=d, signals=signals.loc[:d], asset=self.tr.loc[:d]
+            )
         ]
 
         wgt_df = pd.concat(weights, axis=1).T.dropna(how="all")
@@ -76,5 +85,8 @@ class BTest(IBTest):
         # t     1       0
         # t+1   1       1
         wgt_df = wgt_df.shift(1)
+
+        # Final chance to rebalance weights
+        wgt_df = rebalance.finalize(wgt_df)
 
         return wgt_df

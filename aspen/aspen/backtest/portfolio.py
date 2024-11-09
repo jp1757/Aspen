@@ -92,6 +92,60 @@ def fx_adjust(
         return _asset_tr.mul(_fx_map, axis=1)
 
 
+def drift(*, asset_tr: pd.DataFrame, weights: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate drifted asset portfolio weights
+
+    wi,t+1 = wi,t x ((1+Ri,t) / (1+Rp,t))
+
+    (w_{i,t+1}) represents the drifted weight for asset (i) in the next period.
+    (R_{i,t}) is the return of asset (i) in the current period.
+    (R_{p,t}) is the portfolio return in the current period.
+
+    :param asset_tr: (pd.DataFrame) asset total return price data set to a higher
+        frequency than the asset weights. Index set to dates, columns set to assets.
+        i.e. if the asset weights are monthly then pass something like weekly or
+        daily total return prices for this to work.
+    :param weights: (pd.DataFrame) asset weights. Index set to dates, columns
+        set to assets.
+
+    :return: (pd.DataFrame) return a dataframe of drifted weights indexed to the
+        same date index passed via the asset_tr param.  Index set to dates, columns
+        set to assets.
+    """
+
+    # Re-index to all days
+    dates = pd.date_range(start=asset_tr.index.min(), end=asset_tr.index.max())
+
+    # Calculate returns indexed to higher frequency asset returns filling forward
+    # the static weight from the previous period
+    _ret, _tr, _asset = returns(dates=dates, weights=weights, asset_tr=asset_tr)
+
+    # Align weights with asset total return prices
+    _weights = Align(dates, fillforward=True).apply(weights)
+
+    # Shift weights to align with returns
+    wgt_shift = _weights.shift(1)
+
+    # Calculate asset returns
+    asset_ret = asset_tr.pct_change()
+
+    # Calculate inter-period drifted weights
+    drift = wgt_shift * ((1 + asset_ret).div(1 + _ret, axis=0))
+
+    # Merge in actual re-balance weights to drift weights
+    # 1st remove actual weights dates from drift dataframe
+    drift = drift.loc[list(set(drift.index) - set(weights.index))]
+    # Next concat + merge drift weights with actual weights
+    drift = pd.concat([drift, weights])
+    # Drop rows with all NaNs and sort
+    drift = drift.dropna(how="all").sort_index()
+    # Set index name
+    drift.index.name = weights.index.name
+
+    return drift
+
+
 class Portfolio(object):
     """
     Portfolio object that takes a set of weights
@@ -193,56 +247,3 @@ class Portfolio(object):
     def asset_port_tr(self):
         """Return the portfolio total return index split by asset"""
         return (1 + self.__asset_port_ret.fillna(0)).cumprod()
-
-    def drift(self, asset_tr: pd.DataFrame) -> pd.DataFrame:
-        """
-        Calculate drifted asset portfolio weights
-
-        wi,t+1 = wi,t x ((1+Ri,t) / (1+Rp,t))
-
-        (w_{i,t+1}) represents the drifted weight for asset (i) in the next period.
-        (R_{i,t}) is the return of asset (i) in the current period.
-        (R_{p,t}) is the portfolio return in the current period.
-
-        :param asset_tr: (pd.DataFrame) asset total return price data set to a higher
-            frequency than the asset weights passed through __init__. Index set to
-            dates, columns set to assets.
-            i.e. if the asset weights are monthly then pass something like weekly or
-            daily total return prices for this to work.
-
-        :return: (pd.DataFrame) return a dataframe of drifted weights indexed to the
-            same date index passed via the asset_tr param.  Index set to dates, columns
-            set to assets.
-        """
-
-        # Re-index to all days
-        dates = pd.date_range(start=asset_tr.index.min(), end=asset_tr.index.max())
-
-        # Calculate returns indexed to higher frequency asset returns filling forward
-        # the static weight from the previous period
-        _ret, _tr, _asset = returns(dates=dates, weights=self.weights, asset_tr=asset_tr)
-
-        # Align weights with asset total return prices
-        weights = Align(dates, fillforward=True).apply(self.weights)
-
-        # Shift weights to align with returns
-        wgt_shift = weights.shift(1)
-
-        # Calculate asset returns
-        asset_ret = asset_tr.pct_change()
-
-        # Calculate inter-period drifted weights
-        drift = wgt_shift * ((1 + asset_ret).div(1 + _ret, axis=0))
-
-        # Merge in actual re-balance weights to drift weights
-        # 1st remove actual weights dates from drift dataframe
-        drift = drift.loc[list(set(drift.index) - set(self.weights.index))]
-        # Next concat + merge drift weights with actual weights
-        drift = pd.concat([drift, self.weights])
-        # Drop rows with all NaNs and sort
-        drift = drift.dropna(how="all").sort_index()
-        # Set index name
-        drift.index.name = self.weights.index.name
-        drift.name = self.name
-
-        return drift
