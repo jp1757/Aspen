@@ -103,10 +103,11 @@ def drift(*, asset_tr: pd.DataFrame, weights: pd.DataFrame) -> pd.DataFrame:
     (R_{p,t}) is the portfolio return in the current period.
 
     :param asset_tr: (pd.DataFrame) asset total return price data set to a higher
-        frequency than the asset weights passed through __init__. Index set to
-        dates, columns set to assets.
+        frequency than the asset weights. Index set to dates, columns set to assets.
         i.e. if the asset weights are monthly then pass something like weekly or
         daily total return prices for this to work.
+    :param weights: (pd.DataFrame) asset weights. Index set to dates, columns
+        set to assets.
 
     :return: (pd.DataFrame) return a dataframe of drifted weights indexed to the
         same date index passed via the asset_tr param.  Index set to dates, columns
