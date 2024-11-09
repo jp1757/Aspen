@@ -9,7 +9,7 @@ import numpy as np
 
 import sklearn.linear_model
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import aspen.backtest.portfolio
 import aspen.stats
@@ -76,7 +76,7 @@ class TestPortfolio(unittest.TestCase):
         msft = (1 + self.rBM.iloc[:, 1]).cumprod()
 
         # Calculate excess manually
-        df = pd.concat([aapl, msft], axis=1).loc[:msft.index.max()]
+        df = pd.concat([aapl, msft], axis=1).loc[: msft.index.max()]
         df["msft"] = df.msft.ffill()
         df = df.dropna(subset="aapl")
         df_xs = df.iloc[:, 0].pct_change() - df.iloc[:, 1].pct_change()
@@ -166,7 +166,9 @@ class TestPortfolio(unittest.TestCase):
         drift_cols = [f"{x}_d" for x in port.asset_tr.columns]
         shift_cols = [f"{x}_d+1" for x in port.asset_tr.columns]
 
-        drifted = port.drift(asset_tr=(1 + self.rW).cumprod())
+        drifted = aspen.backtest.portfolio.drift(
+            asset_tr=(1 + self.rW).cumprod(), weights=wgts
+        )
         drift = drifted.rename(columns=dict(zip(drifted.columns, drift_cols)))
 
         df = pd.concat([port.weights, drift], axis=1)
@@ -180,7 +182,9 @@ class TestPortfolio(unittest.TestCase):
         turnover = diff.sum().sum() / (len(wgts) / 12)
 
         # Assertion statements
-        np.testing.assert_almost_equal(wgts.turnover(periods=12, drifted=drifted), turnover)
+        np.testing.assert_almost_equal(
+            wgts.turnover(periods=12, drifted=drifted), turnover
+        )
 
 
 class TestSignal(unittest.TestCase):
@@ -218,14 +222,14 @@ class TestSignal(unittest.TestCase):
 
         np.testing.assert_almost_equal(
             df.iloc[1:5, 0].iloc[-1] / df.iloc[1:5, 0].iloc[0] - 1,
-            df.iloc[len(df.iloc[1:5, 0]), 3]
+            df.iloc[len(df.iloc[1:5, 0]), 3],
         )
 
         sig_start = df["signal"].dropna().index[0]
-        shift_3 = df.loc[sig_start:].iloc[0: 4]
+        shift_3 = df.loc[sig_start:].iloc[0:4]
         np.testing.assert_almost_equal(
             shift_3.iloc[:, 0][-1] / shift_3.iloc[:, 0][0] - 1,
-            df["ret+3"].loc[sig_start]
+            df["ret+3"].loc[sig_start],
         )
 
         df.dropna(subset=["signal"], inplace=True)
@@ -244,14 +248,24 @@ class TestSignal(unittest.TestCase):
         np.testing.assert_almost_equal(corr["signal"].loc["ret+3"], ic_3)
 
         pd.testing.assert_series_equal(
-            df[["signal", "ret+1"]].rolling(5).corr().dropna().iloc[:, 1].loc[:, "signal"],
+            df[["signal", "ret+1"]]
+            .rolling(5)
+            .corr()
+            .dropna()
+            .iloc[:, 1]
+            .loc[:, "signal"],
             rolling_1,
-            check_names=False
+            check_names=False,
         )
         pd.testing.assert_series_equal(
-            df[["signal", "ret+3"]].rolling(5).corr().dropna().iloc[:, 1].loc[:, "signal"],
+            df[["signal", "ret+3"]]
+            .rolling(5)
+            .corr()
+            .dropna()
+            .iloc[:, 1]
+            .loc[:, "signal"],
             rolling_3,
-            check_names=False
+            check_names=False,
         )
 
     def test_ic_xsect(self):
@@ -312,9 +326,9 @@ class TestSignal(unittest.TestCase):
 
         # Calculate test data
         df = pd.concat(
-            [pd.Series(self.tr.pct_change().shift(-1).stack(), name="ret")] +
-            [pd.Series(z.stack(), name=f"zsc[{x}]") for x, z in self.zsc.items()],
-            axis=1
+            [pd.Series(self.tr.pct_change().shift(-1).stack(), name="ret")]
+            + [pd.Series(z.stack(), name=f"zsc[{x}]") for x, z in self.zsc.items()],
+            axis=1,
         )
         df = df.unstack().dropna().iloc[5].unstack().T
 
@@ -330,7 +344,7 @@ class TestSignal(unittest.TestCase):
             self.zsc[3],
             *[x for y, x in self.zsc.items() if y != 3],
             tr=self.tr,
-            name="test"
+            name="test",
         )
 
         np.testing.assert_almost_equal(regression.coef_[0], fret.iloc[6])
