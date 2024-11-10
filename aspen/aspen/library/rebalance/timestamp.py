@@ -26,7 +26,7 @@ class DayOfWeek(IRebal):
 
 class BusinessMonthEnd(IRebal):
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.__date: pd.Timestamp = None
         self.__rebal_date: pd.Timestamp = None
         self.__counter = 0
