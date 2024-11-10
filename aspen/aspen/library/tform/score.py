@@ -8,16 +8,13 @@ from aspen.tform.core import ITForm
 class ZScore(ITForm):
     """Timeseries zscore calculation"""
 
-    def __init__(self, tform: ITForm, *, dropna: str = "all", **kwargs) -> None:
+    def __init__(self, tform: ITForm) -> None:
         """
         Init object
         :param tform: (ITForm) transformation object for calulating rolling window.
             Typically implements pd.rolling or pd.ewm
-        :param dropna: (str) drop NaNs from final dataframe either 'all' or 'any'
-        :param kwargs:
         """
         self.tf = tform
-        self.dropna = dropna
 
     def apply(self, data: pd.DataFrame, *other: pd.DataFrame) -> pd.DataFrame:
         """
