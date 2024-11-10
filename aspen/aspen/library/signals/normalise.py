@@ -44,4 +44,4 @@ class XSWeights(INormalise):
         :param data: (pd.DataFrame) signal data to normalise
         :return: (pd.DataFrame) normalised signal data
         """
-        return data.div(data.abs().sum(axis=1), axis=0)
+        return data.div(data.abs().sum(axis=1), axis=0).sort_index()
