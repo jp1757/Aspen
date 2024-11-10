@@ -5,6 +5,7 @@ Provides a definition for a SignalHeap object
 from typing import Dict, List
 
 import pandas as pd
+import functools
 
 from aspen.signals.core import ISignal, ISignals
 from aspen.signals.leaf import ILeaf
@@ -108,6 +109,7 @@ class Signals(ISignals):
             "parameter to retrieve specific signal data"
         )
 
+    @functools.lru_cache(maxsize=None)
     def build(self, name: str = None) -> pd.DataFrame:
         """
         Serve up signal data by setting the 'name' parameter
