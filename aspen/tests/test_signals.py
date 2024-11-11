@@ -13,7 +13,7 @@ from aspen.tform.generic import TForm, Merge
 from aspen.tform.pipeline import Pipeline
 from aspen.signals.generic import SignalHeap, SignalDF
 from aspen.signals.leaf import LeafHeap, Leaf
-from aspen.library.signals.signals import XSMean
+from aspen.library.signals.combine import XSMean
 
 
 class TestSignal(unittest.TestCase):
