@@ -11,13 +11,12 @@ import pandas as pd
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from aspen.signals.generic import SignalDF, Signals, SignalsDF
+from aspen.signals.generic import SignalDF, Signals, SignalsDF, Normalise
 from aspen.pcr import IPortConstruct
 from aspen.backtest.generic import BTest
 import aspen.library.pcr.quintile
 import aspen.backtest.portfolio
-import aspen.library.signals.normalise
-import aspen.library.tform
+import aspen.library.tform.rank
 import utils
 
 
@@ -83,10 +82,12 @@ class TestBTest(unittest.TestCase):
         # Test data
         dates = self.tr.index
         zsc = {x: utils.zsc(self.tr, x) for x in [3, 4]}
-        signals = Signals(*[SignalDF(str(x), v) for x, v in zsc.items()])
+        signals = Signals(*[SignalDF(str(x), v) for x, v in zsc.items()], name="test")
         pcr = aspen.library.pcr.quintile.QuantileEW(long_bin=1, short_bin=3)
-        normalise = aspen.library.signals.normalise.Quantile(
-            rank=aspen.library.tform.rank.RankXSect(pct=False), bins=3
+        normalise = Normalise(
+            aspen.library.tform.rank.Quantile(
+                rank=aspen.library.tform.rank.RankXSect(pct=False), bins=3
+            )
         )
 
         # Build & run backtest object

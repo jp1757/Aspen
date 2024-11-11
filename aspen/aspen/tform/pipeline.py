@@ -2,6 +2,7 @@
 Sets out logic for combining multiple transformations in succession
 aka function composition
 """
+
 import pandas as pd
 
 from aspen.tform.core import ITForm
@@ -14,6 +15,11 @@ class Pipeline(ITForm):
     """
 
     def __init__(self, *tform: ITForm, save: bool = False) -> None:
+        """
+        Init Pipeline object
+        :param tform: (ITForm) >= 1 ITForm object to run in succession
+        :param save: (bool, optional) save state after each transformation
+        """
         self.tforms: ITForm = tform
         self.save: bool = save
 
@@ -21,6 +27,13 @@ class Pipeline(ITForm):
         self.__apply = self._diagnostics if save else self._apply
 
     def apply(self, data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Run pipeline on input data
+
+        :param data: (pandas.DataFrame) input data to apply transformation to
+        :param *other: (pandas.DataFrame) other data frames to use in transformation
+        :return: (pandas.DataFrame) transformed data
+        """
         return self.__apply(data)
 
     def _apply(self, data: pd.DataFrame) -> pd.DataFrame:

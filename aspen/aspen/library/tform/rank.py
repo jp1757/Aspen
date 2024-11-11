@@ -5,6 +5,7 @@ Objects for ranking data
 import pandas as pd
 
 from aspen.tform.core import ITForm
+import aspen.library.tform.rank
 
 
 class RankXSect(ITForm):
@@ -68,3 +69,30 @@ class QCutXSect(ITForm):
         qcuts.index.name = data.index.name
 
         return qcuts
+
+
+class Quantile(ITForm):
+    """
+    Use the rank and qcut TForm objects to transform signal data
+    into binned data
+    """
+
+    def __init__(self, *, rank: ITForm, bins: int, **kwargs) -> None:
+        """
+        Init Quantile object
+        :param rank: (ITForm) a tform object that creates cross-sectional ranked data
+        :param bins: (int) number of bins
+        :param kwargs: (optional) kwargs to pass to aspen.tform.library.rank.QCutXSect
+        """
+        self.rank = rank
+        self.qcut = aspen.library.tform.rank.QCutXSect(bins=bins, **kwargs)
+
+    def apply(self, data: pd.DataFrame, *other: pd.DataFrame) -> pd.DataFrame:
+        """
+        Normalise signal data
+        :param data: (pandas.DataFrame) input data to apply transformation to
+        :param *other: (pandas.DataFrame) other data frames to use in transformation
+        :return: (pandas.DataFrame) transformed data
+        """
+        ranks = self.rank.apply(data)
+        return self.qcut.apply(ranks)

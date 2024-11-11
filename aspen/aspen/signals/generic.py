@@ -7,7 +7,8 @@ from typing import Dict, List
 import pandas as pd
 import functools
 
-from aspen.signals.core import ISignal, ISignals
+from aspen.tform.core import ITForm
+from aspen.signals.core import ISignal, ISignals, INormalise
 from aspen.signals.leaf import ILeaf
 
 
@@ -85,17 +86,34 @@ class SignalDF(ISignal):
 
 class Signals(ISignals):
     """
-    Stores multiple signal objects but does *not* combine them.
-    Access them by passing the signal name to build function
+    Stores multiple signal objects but does *not* combine them.  Please inherit &
+    override _combine function with logic for combining signals.
+    This class just provides access to the individual signals by passing the name to
+    the build function
     """
 
-    def __init__(self, *signals: ISignal) -> None:
+    def __init__(
+        self, *signals: ISignal, name: str, normalise: INormalise = None
+    ) -> None:
+        """
+        Init generic Signals object used for combining ISignal objects
+        :param signals: (ISignal) >= 1 ISignal object to store
+        :param name: (str) name of signals object
+        :param normalise: (INormalise, optional) option for normalising signal data
+            when build is called as the final step.
+        """
 
         self._signals = {s.name: s for s in signals}
         if len(signals) > len(self._signals):
             raise ValueError(
                 f"Duplicate signal name suspected: {[s.name for s in signals]}"
             )
+        self._name = name
+        self.normalise = normalise
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @property
     def signals(self) -> List[ISignal]:
@@ -119,10 +137,11 @@ class Signals(ISignals):
             to asset ids
         """
 
-        if name is None:
-            return self._combine()
-        else:
-            return self._signals[name].calculate()
+        _s = self._combine() if name is None else self._signals[name].calculate()
+        if self.normalise is not None:
+            _s = self.normalise.norm(_s)
+
+        return _s
 
 
 class SignalsDF(ISignals):
@@ -136,8 +155,12 @@ class SignalsDF(ISignals):
         :param name: (str) name of signal data
         :param data: (pd.DataFrame) signal data
         """
-        self.name = name
+        self._name = name
         self.data = data
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @property
     def signals(self) -> List[ISignal]:
@@ -154,3 +177,22 @@ class SignalsDF(ISignals):
         """
 
         return self.data
+
+
+class Normalise(INormalise):
+    """
+    Generic implementation of INormalise that accepts ITForm objects.
+    Basically acting as a ITForm->INormalise adapter used for post
+    signal processing before backtests.
+    """
+
+    def __init__(self, tform: ITForm):
+        self.tform = tform
+
+    def norm(self, data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Normalise signal data
+        :param data: (pd.DataFrame) signal data to normalise
+        :return: (pd.DataFrame) normalised signal data
+        """
+        return self.tform.apply(data)

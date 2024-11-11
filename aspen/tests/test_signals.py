@@ -119,7 +119,9 @@ class TestSignals(unittest.TestCase):
 
     def test_smean(self):
         """Test SMean object"""
-        smean = SMean(SignalDF("bins1", self.bins), SignalDF("bins2", self.bins + 1))
+        smean = SMean(
+            SignalDF("bins1", self.bins), SignalDF("bins2", self.bins + 1), name="test"
+        )
         build = smean.build()
 
         pd.testing.assert_series_equal(

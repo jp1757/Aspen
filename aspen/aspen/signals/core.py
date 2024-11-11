@@ -28,10 +28,11 @@ class ISignal(metaclass=abc.ABCMeta):
         pass
 
 
-class ISignals(metaclass=abc.ABCMeta):
+class ISignals(ISignal, metaclass=abc.ABCMeta):
     """
     Sets out a structure for normalising & then combining
     multiple individual signal (ISignal) objects.
+    Object used to pass signals to backtest object.
     """
 
     @property
@@ -51,6 +52,13 @@ class ISignals(metaclass=abc.ABCMeta):
             to asset ids
         """
         pass
+
+    def calculate(self) -> pd.DataFrame:
+        """
+        Calculate a signal object & return data
+        :return: pd.DataFrame
+        """
+        return self.build()
 
 
 class INormalise(metaclass=abc.ABCMeta):
