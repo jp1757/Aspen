@@ -75,3 +75,22 @@ class TestScore(unittest.TestCase):
             aspen.tform.generic.TForm("ewm", halflife=5, min_periods=5)
         )
         pd.testing.assert_frame_equal(pd.DataFrame(ewm), ewm_tf.apply(td))
+
+    def test_xsweights(self):
+        """Test cross-sectional weights calculation"""
+
+        # Random scores
+        scores = pd.DataFrame(
+            np.random.uniform(-2, 2, (10, 4)),
+            columns=["a", "b", "c", "d"],
+            index=pd.date_range(end=pd.Timestamp.now().date(), periods=10, name="date"),
+        )
+
+        # Init normalise obj
+        norm = aspen.library.tform.score.XSWeights()
+        norm_df = norm.apply(scores)
+
+        # Assertion statements
+        np.testing.assert_array_almost_equal(norm_df.abs().sum(axis=1), 1.0)
+        pd.testing.assert_frame_equal(norm_df < 0, scores < 0)
+        pd.testing.assert_frame_equal(norm_df > 0, scores > 0)
