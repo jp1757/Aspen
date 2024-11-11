@@ -92,10 +92,13 @@ class Signals(ISignals):
     the build function
     """
 
-    def __init__(self, *signals: ISignal, normalise: INormalise = None) -> None:
+    def __init__(
+        self, *signals: ISignal, name: str, normalise: INormalise = None
+    ) -> None:
         """
         Init generic Signals object used for combining ISignal objects
         :param signals: (ISignal) >= 1 ISignal object to store
+        :param name: (str) name of signals object
         :param normalise: (INormalise, optional) option for normalising signal data
             when build is called as the final step.
         """
@@ -105,7 +108,12 @@ class Signals(ISignals):
             raise ValueError(
                 f"Duplicate signal name suspected: {[s.name for s in signals]}"
             )
+        self._name = name
         self.normalise = normalise
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @property
     def signals(self) -> List[ISignal]:
@@ -147,8 +155,12 @@ class SignalsDF(ISignals):
         :param name: (str) name of signal data
         :param data: (pd.DataFrame) signal data
         """
-        self.name = name
+        self._name = name
         self.data = data
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @property
     def signals(self) -> List[ISignal]:

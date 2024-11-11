@@ -82,7 +82,7 @@ class TestBTest(unittest.TestCase):
         # Test data
         dates = self.tr.index
         zsc = {x: utils.zsc(self.tr, x) for x in [3, 4]}
-        signals = Signals(*[SignalDF(str(x), v) for x, v in zsc.items()])
+        signals = Signals(*[SignalDF(str(x), v) for x, v in zsc.items()], name="test")
         pcr = aspen.library.pcr.quintile.QuantileEW(long_bin=1, short_bin=3)
         normalise = Normalise(
             aspen.library.tform.rank.Quantile(
