@@ -86,17 +86,26 @@ class SignalDF(ISignal):
 
 class Signals(ISignals):
     """
-    Stores multiple signal objects but does *not* combine them.
-    Access them by passing the signal name to build function
+    Stores multiple signal objects but does *not* combine them.  Please inherit &
+    override _combine function with logic for combining signals.
+    This class just provides access to the individual signals by passing the name to
+    the build function
     """
 
-    def __init__(self, *signals: ISignal) -> None:
+    def __init__(self, *signals: ISignal, normalise: INormalise = None) -> None:
+        """
+        Init generic Signals object used for combining ISignal objects
+        :param signals: (ISignal) >= 1 ISignal object to store
+        :param normalise: (INormalise, optional) option for normalising signal data
+            when build is called as the final step.
+        """
 
         self._signals = {s.name: s for s in signals}
         if len(signals) > len(self._signals):
             raise ValueError(
                 f"Duplicate signal name suspected: {[s.name for s in signals]}"
             )
+        self.normalise = normalise
 
     @property
     def signals(self) -> List[ISignal]:
@@ -120,10 +129,11 @@ class Signals(ISignals):
             to asset ids
         """
 
-        if name is None:
-            return self._combine()
-        else:
-            return self._signals[name].calculate()
+        _s = self._combine() if name is None else self._signals[name].calculate()
+        if self.normalise is not None:
+            _s = self.normalise.norm(_s)
+
+        return _s
 
 
 class SignalsDF(ISignals):
