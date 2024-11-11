@@ -7,7 +7,8 @@ from typing import Dict, List
 import pandas as pd
 import functools
 
-from aspen.signals.core import ISignal, ISignals
+from aspen.tform.core import ITForm
+from aspen.signals.core import ISignal, ISignals, INormalise
 from aspen.signals.leaf import ILeaf
 
 
@@ -154,3 +155,22 @@ class SignalsDF(ISignals):
         """
 
         return self.data
+
+
+class Normalise(INormalise):
+    """
+    Generic implementation of INormalise that accepts ITForm objects.
+    Basically acting as a ITForm->INormalise adapter used for post
+    signal processing before backtests.
+    """
+
+    def __init__(self, tform: ITForm):
+        self.tform = tform
+
+    def norm(self, data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Normalise signal data
+        :param data: (pd.DataFrame) signal data to normalise
+        :return: (pd.DataFrame) normalised signal data
+        """
+        return self.tform.apply(data)
