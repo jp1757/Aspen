@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 import aspen.library.pcr.quintile
-import aspen.library.signals.normalise
 import aspen.library.tform.rank
 import aspen.stats.library.signal
 import aspen.stats.report.portfolio
@@ -28,7 +27,7 @@ def qport(
     # Init quantile portfolio construction
     pcr = aspen.library.pcr.quintile.QuantileEW(long_bin=1, short_bin=bins)
     # Normalize signal data cross-sectionally into bins
-    normalise = aspen.library.signals.normalise.Quantile(
+    normalise = aspen.library.tform.rank.Quantile(
         rank=aspen.library.tform.rank.RankXSect(pct=pct_rank), bins=bins
     )
     # Init backtest object
