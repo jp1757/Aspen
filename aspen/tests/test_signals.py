@@ -13,7 +13,7 @@ from aspen.tform.generic import TForm, Merge
 from aspen.tform.pipeline import Pipeline
 from aspen.signals.generic import SignalHeap, SignalDF
 from aspen.signals.leaf import LeafHeap, Leaf
-from aspen.library.signals.signals import SMean
+from aspen.library.signals.combine import XSMean
 
 
 class TestSignal(unittest.TestCase):
@@ -119,7 +119,7 @@ class TestSignals(unittest.TestCase):
 
     def test_smean(self):
         """Test SMean object"""
-        smean = SMean(
+        smean = XSMean(
             SignalDF("bins1", self.bins), SignalDF("bins2", self.bins + 1), name="test"
         )
         build = smean.build()
