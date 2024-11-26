@@ -29,6 +29,7 @@ class BTest(IBTest):
         normalise: INormalise = None,
         rebalance: IRebal = AllDates(),
         signal: str = None,
+        dates: pd.DatetimeIndex = None,
     ) -> None:
         """
         Init backtest object
@@ -40,6 +41,8 @@ class BTest(IBTest):
         :param rebalance: (IRebal, optional) drives when rebalance weights are generated.
             Default AllDates
         :param signal: (str) name of signal when only using one signal from ISignals obj
+        :param dates: (pd.DatetimeIndex, optional) dates to run backtest over, uses signal
+            dates by default
         """
         # Store instance vars
         self._name = name
