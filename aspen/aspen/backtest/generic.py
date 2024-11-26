@@ -28,9 +28,21 @@ class BTest(IBTest):
         signals: ISignals,
         pcr: IPortConstruct,
         normalise: INormalise = None,
-        rebalance: IRebal = None,
+        rebalance: IRebal = AllDates(),
         signal: str = None,
     ) -> None:
+        """
+        Init backtest object
+        :param name: (str) name of backtest instance
+        :param dates: (pd.DatetimeIndex) dates to run backtest over
+        :param tr: (pd.DataFrame) asset total return index data
+        :param signals: (ISignals) signals object to calculate asset weights from
+        :param pcr: (IPortConstruct) portfolio construction object
+        :param normalise: (INormalise, optional) object to normalise signal data
+        :param rebalance: (IRebal, optional) drives when rebalance weights are generated.
+            Default AllDates
+        :param signal: (str) name of signal when only using one signal from ISignals obj
+        """
         # Store instance vars
         self._name = name
         self.dates = dates
@@ -62,14 +74,11 @@ class BTest(IBTest):
         if self.normalise is not None:
             signals = self.normalise.norm(signals)
 
-        # Set rebalance object
-        rebalance = AllDates() if self.rebalance is None else self.rebalance
-
         weights = [
             self.pcr.weights(date=d, signals=signals.loc[:d], asset=self.tr.loc[:d])
             for d in self.dates
             if (len(signals.loc[:d]) > 0)
-            and rebalance.rebalance(
+            and self.rebalance.rebalance(
                 date=d, signals=signals.loc[:d], asset=self.tr.loc[:d]
             )
         ]
@@ -87,6 +96,6 @@ class BTest(IBTest):
         wgt_df = wgt_df.shift(1)
 
         # Final chance to rebalance weights
-        wgt_df = rebalance.finalize(wgt_df)
+        wgt_df = self.rebalance.finalize(wgt_df)
 
         return wgt_df
