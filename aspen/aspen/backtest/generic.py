@@ -23,7 +23,6 @@ class BTest(IBTest):
         self,
         name: str,
         *,
-        dates: pd.DatetimeIndex,
         tr: pd.DataFrame,
         signals: ISignals,
         pcr: IPortConstruct,
@@ -34,7 +33,6 @@ class BTest(IBTest):
         """
         Init backtest object
         :param name: (str) name of backtest instance
-        :param dates: (pd.DatetimeIndex) dates to run backtest over
         :param tr: (pd.DataFrame) asset total return index data
         :param signals: (ISignals) signals object to calculate asset weights from
         :param pcr: (IPortConstruct) portfolio construction object
@@ -45,15 +43,12 @@ class BTest(IBTest):
         """
         # Store instance vars
         self._name = name
-        self.dates = dates
+        self.tr = tr
         self.signals = signals
         self.pcr = pcr
         self.rebalance = rebalance
         self.normalise = normalise
         self.signal = signal
-
-        # Align total return data to input dates
-        self.tr = Reindex(dates).apply(tr)
 
     @property
     def name(self) -> str:
@@ -74,12 +69,17 @@ class BTest(IBTest):
         if self.normalise is not None:
             signals = self.normalise.norm(signals)
 
+        # Dates to run backtest over
+        dates = signals.index
+
+        # Align asset total return index data with signal
+        tr = Reindex(dates).apply(self.tr).ffill()
+
         weights = [
-            self.pcr.weights(date=d, signals=signals.loc[:d], asset=self.tr.loc[:d])
-            for d in self.dates
-            if (len(signals.loc[:d]) > 0)
-            and self.rebalance.rebalance(
-                date=d, signals=signals.loc[:d], asset=self.tr.loc[:d]
+            self.pcr.weights(date=d, signals=signals.loc[:d], asset=tr.loc[:d])
+            for d in dates
+            if self.rebalance.rebalance(
+                date=d, signals=signals.loc[:d], asset=tr.loc[:d]
             )
         ]
 
