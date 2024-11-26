@@ -52,6 +52,7 @@ class BTest(IBTest):
         self.rebalance = rebalance
         self.normalise = normalise
         self.signal = signal
+        self.dates = dates
 
     @property
     def name(self) -> str:
@@ -73,7 +74,7 @@ class BTest(IBTest):
             signals = self.normalise.norm(signals)
 
         # Dates to run backtest over
-        dates = signals.index
+        dates = signals.index if self.dates is None else self.dates
 
         # Align asset total return index data with signal
         tr = Reindex(dates).apply(self.tr).ffill()
