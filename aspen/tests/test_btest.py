@@ -56,7 +56,6 @@ class TestBTest(unittest.TestCase):
         # Create backtest object
         btest = BTest(
             "test",
-            dates=self.dates,
             tr=self.tr,
             signals=SignalsDF(name="test", data=self.sig_df),
             pcr=PCRProp(),
@@ -93,7 +92,6 @@ class TestBTest(unittest.TestCase):
         # Build & run backtest object
         btest = BTest(
             "test",
-            dates=dates,
             tr=self.tr,
             signals=signals,
             pcr=pcr,
@@ -382,7 +380,6 @@ class TestPortfolio(unittest.TestCase):
         # Build backtest object
         btest = BTest(
             name="test",
-            dates=sig.index,
             tr=tr,
             signals=SignalsDF(name="test", data=sig),
             pcr=_PCR(),
