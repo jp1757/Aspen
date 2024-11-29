@@ -11,7 +11,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from aspen.signals.generic import SignalDF, Signals, SignalsDF, Normalise
+from aspen.signals.generic import SignalDF, Signals, SignalsDF, Normalise, SignalType
 from aspen.pcr import IPortConstruct
 from aspen.backtest.generic import BTest
 import aspen.library.pcr.quintile
@@ -81,7 +81,11 @@ class TestBTest(unittest.TestCase):
         # Test data
         dates = self.tr.index
         zsc = {x: utils.zsc(self.tr, x) for x in [3, 4]}
-        signals = Signals(*[SignalDF(str(x), v) for x, v in zsc.items()], name="test")
+        signals = Signals(
+            *[SignalDF(str(x), v) for x, v in zsc.items()],
+            name="test",
+            direction=SignalType.DIRECTIONAL,
+        )
         pcr = aspen.library.pcr.quintile.QuantileEW(long_bin=1, short_bin=3)
         normalise = Normalise(
             aspen.library.tform.rank.Quantile(

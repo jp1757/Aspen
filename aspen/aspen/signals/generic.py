@@ -2,14 +2,20 @@
 Provides a definition for a SignalHeap object
 """
 
+import functools
+from enum import Enum
 from typing import Dict, List
 
 import pandas as pd
-import functools
 
-from aspen.tform.core import ITForm
 from aspen.signals.core import ISignal, ISignals, INormalise
 from aspen.signals.leaf import ILeaf
+from aspen.tform.core import ITForm
+
+
+class SignalType(Enum):
+    DIRECTIONAL = 1
+    REVERSION = 2
 
 
 class Signal(ISignal):
@@ -93,7 +99,11 @@ class Signals(ISignals):
     """
 
     def __init__(
-        self, *signals: ISignal, name: str, normalise: INormalise = None
+        self,
+        *signals: ISignal,
+        name: str,
+        direction: SignalType,
+        normalise: INormalise = None,
     ) -> None:
         """
         Init generic Signals object used for combining ISignal objects
@@ -109,6 +119,7 @@ class Signals(ISignals):
                 f"Duplicate signal name suspected: {[s.name for s in signals]}"
             )
         self._name = name
+        self.direction = direction
         self.normalise = normalise
 
     @property
@@ -140,6 +151,10 @@ class Signals(ISignals):
         _s = self._combine() if name is None else self._signals[name].calculate()
         if self.normalise is not None:
             _s = self.normalise.norm(_s)
+
+        # Convert to signal direction
+        if self.direction == SignalType.REVERSION:
+            _s = _s.mul(-1)
 
         return _s
 
