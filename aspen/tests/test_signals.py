@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from aspen.tform.generic import TForm, Merge
 from aspen.tform.pipeline import Pipeline
-from aspen.signals.generic import SignalHeap, SignalDF
+from aspen.signals.generic import SignalHeap, SignalDF, SignalType
 from aspen.signals.leaf import LeafHeap, Leaf
 from aspen.library.signals.combine import XSMean
 
@@ -120,7 +120,10 @@ class TestSignals(unittest.TestCase):
     def test_smean(self):
         """Test SMean object"""
         smean = XSMean(
-            SignalDF("bins1", self.bins), SignalDF("bins2", self.bins + 1), name="test"
+            SignalDF("bins1", self.bins),
+            SignalDF("bins2", self.bins + 1),
+            name="test",
+            direction=SignalType.DIRECTIONAL,
         )
         build = smean.build()
 
@@ -129,3 +132,10 @@ class TestSignals(unittest.TestCase):
             ((self.bins.iloc[0] + self.bins.iloc[0] + 1) / 2).sort_index(),
         )
         pd.testing.assert_frame_equal(self.bins, smean.build("bins1"))
+
+    def test_direction(self):
+        """Test flipping signal direction"""
+        smean = XSMean(
+            SignalDF("bins1", self.bins), name="test", direction=SignalType.REVERSION
+        )
+        pd.testing.assert_frame_equal(self.bins * -1.0, smean.build())
