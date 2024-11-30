@@ -1,6 +1,7 @@
 """
 Transformations aligning data sets
 """
+
 import pandas as pd
 
 from aspen.tform.core import ITForm
@@ -8,12 +9,17 @@ from aspen.tform.core import ITForm
 
 class Reindex(ITForm):
     """
-    Re-index dataframe to a set of specific dates by
-    first moving to daily dates then filling forward to
-    ensure no data loss
+    Re-index dataframe to a set of specific dates by first moving to daily dates then
+    filling forward to ensure no data loss
     """
 
     def __init__(self, dates: pd.DatetimeIndex, ffill_trailing: bool = False):
+        """
+        Init reindex object
+        :param dates: (pd.DatetimeIndex) dates to re-index to
+        :param ffill_trailing: (bool) whether to include filled forward data passed
+            input data max date
+        """
         self.dates = dates
         self.ffill_trailing = ffill_trailing
 
@@ -37,7 +43,7 @@ class Reindex(ITForm):
 
         # Remove trailing fill forward data from input
         if not self.ffill_trailing:
-            _data = _data.loc[:min(self.dates.max(), data.index.max())].copy()
+            _data = _data.loc[: min(self.dates.max(), data.index.max())].copy()
 
         return _data
 
@@ -48,10 +54,10 @@ class Align(ITForm):
     """
 
     def __init__(
-            self,
-            *dates: pd.DatetimeIndex,
-            fillforward: bool = True,
-            mode: str = "intersect",
+        self,
+        *dates: pd.DatetimeIndex,
+        fillforward: bool = True,
+        mode: str = "intersect",
     ) -> None:
         """
         Init object to align

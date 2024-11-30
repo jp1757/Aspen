@@ -138,4 +138,4 @@ class TestSignals(unittest.TestCase):
         smean = XSMean(
             SignalDF("bins1", self.bins), name="test", direction=SignalType.REVERSION
         )
-        pd.testing.assert_frame_equal(self.bins * -1.0, smean.build())
+        pd.testing.assert_frame_equal(self.bins * -1, smean.build())

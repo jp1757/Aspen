@@ -119,8 +119,14 @@ class Signals(ISignals):
                 f"Duplicate signal name suspected: {[s.name for s in signals]}"
             )
         self._name = name
-        self.direction = direction
         self.normalise = normalise
+
+        # Check direction
+        if not isinstance(direction, SignalType):
+            raise ValueError(
+                "Invalid direction please use type .signals.generic.SignalType"
+            )
+        self.direction = direction
 
     @property
     def name(self) -> str:
@@ -148,7 +154,11 @@ class Signals(ISignals):
             to asset ids
         """
 
-        _s = self._combine() if name is None else self._signals[name].calculate()
+        _s = (
+            list(self._signals.values())[0].calculate()
+            if len(self._signals) == 1
+            else (self._combine() if name is None else self._signals[name].calculate())
+        )
         if self.normalise is not None:
             _s = self.normalise.norm(_s)
 
