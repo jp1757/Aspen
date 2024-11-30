@@ -64,6 +64,11 @@ def vcv(
 
 
 def zero_correlations(cov: pd.DataFrame) -> pd.DataFrame:
+    """
+    Zero out the co-variances leaving just the variances
+    :param cov: (pd.DataFrame) variance co-variance matrix
+    :return: (
+    """
     _vcv = cov.copy()
     v = np.zeros(_vcv.shape)
     np.fill_diagonal(v, np.diag(_vcv))
@@ -142,7 +147,7 @@ class FixedRisk(IPortConstruct):
         _vcv = zero_correlations(_vcv)
 
         # Convert signal to alpha
-        vol = pd.Series(np.sqrt(np.diag(_vcv)), index=_vcv.columns)
+        vol = pd.Series(np.sqrt(np.diag(_vcv)), index=_vcv.index)
         alpha = self.ic * signal * vol
 
         # Run optimization
