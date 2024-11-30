@@ -16,6 +16,27 @@ import aspen.library.tform.align
 def vcv(
     *, dates: pd.DatetimeIndex, asset_tr: pd.DataFrame, freq: str, window: ITForm
 ) -> pd.DataFrame:
+    """
+    Build a time series of variance co-variance matrices using a ITForm object to
+    define the window moving through time ('rolling', 'ewm', 'expanding' etc...).
+
+    It calculates a VCV foreach date from dates.min to dates.max based on the input
+    frequency.  Then re-indexes back to the input dates and fills forward to ensure that
+    there is a VCV on every date.
+
+    :param dates: (pd.DatetimeIndex) dates to build VCVs over ensuring that there is a
+        VCV on every date
+    :param asset_tr: (pd.DataFrame) asset total return index data (i.e. prices) used to
+        build VCVs
+    :param freq: (str) pandas frequency string used to calculate VCVs
+    :param window: (ITForm) transformation to specify rolling window
+        i.e. aspen.tform.generic.TForm('rolling', window=20) would calculate VCVs over
+        every 20 period rolling window
+
+    :return: (pd.DataFrame) multi-index dataframe containing a VCV on every date.
+        Index: date, asset ids
+        Columns: asset ids
+    """
 
     # Re-index asset total return index data to frequency for VCV matrix
     tr = (
