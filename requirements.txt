@@ -3,3 +3,4 @@ aspen~=1.0.0
 matplotlib~=3.7.0
 numpy~=1.23.5
 scikit-learn~=1.2.1
+cvxpy~=1.4.1
