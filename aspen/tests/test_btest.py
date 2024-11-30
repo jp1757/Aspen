@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from aspen.signals.generic import SignalDF, Signals, SignalsDF, Normalise, SignalType
 from aspen.pcr import IPortConstruct
 from aspen.backtest.generic import BTest
-import aspen.library.pcr.quintile
+import aspen.library.pcr.quantile
 import aspen.backtest.portfolio
 import aspen.library.tform.rank
 import utils
@@ -86,7 +86,7 @@ class TestBTest(unittest.TestCase):
             name="test",
             direction=SignalType.DIRECTIONAL,
         )
-        pcr = aspen.library.pcr.quintile.QuantileEW(long_bin=1, short_bin=3)
+        pcr = aspen.library.pcr.quantile.QuantileEW(long_bin=1, short_bin=3)
         normalise = Normalise(
             aspen.library.tform.rank.Quantile(
                 rank=aspen.library.tform.rank.RankXSect(pct=False), bins=3

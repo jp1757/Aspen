@@ -7,7 +7,7 @@ from typing import List, Tuple, Dict
 import matplotlib.pyplot as plt
 import pandas as pd
 
-import aspen.library.pcr.quintile
+import aspen.library.pcr.quantile
 import aspen.library.tform.rank
 import aspen.stats.library.signal
 import aspen.stats.report.portfolio
