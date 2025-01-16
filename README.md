@@ -1,13 +1,13 @@
 # ASPEN
 ### Quant Research & Backtesting Framework
-##### Building strategies from the ground up using this simple building-block approach
+> Building strategies from the ground up using this simple building-block approach
 <br>
 <br>
--------------------------------------------
+
 Tests found in `aspen/tests` <br>
 Please refer to tests and `aspen.library` for examples on how to use and implement the framework
 <br>
--------------------------------------------
+
 To install package, navigate to the `aspen/aspen` directory and run the following command in your python environment:
 > pip install --editable . <br>
 (make sure to include the trailing '.')
