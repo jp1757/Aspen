@@ -1,6 +1,6 @@
 # ASPEN
 ### Quant Research & Backtesting Framework
-Building strategies from the ground up using this simple building-block approach
+##### Building strategies from the ground up using this simple building-block approach
 <br>
 <br>
 -------------------------------------------
