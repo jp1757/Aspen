@@ -12,7 +12,7 @@ from aspen.library.tform.align import Align
 
 
 def __check(tr: pd.Series, func: str):
-    if tr.isna().any():
+    if tr.isna().any().any():
         warnings.warn(
             f"NaN values found in total return prices from func: [{func}]. "
             f"Filling forward last values"
