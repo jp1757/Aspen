@@ -13,7 +13,7 @@ from aspen.tform.generic import TForm, Merge
 from aspen.tform.pipeline import Pipeline
 from aspen.signals.generic import SignalHeap, SignalDF, SignalType
 from aspen.signals.leaf import LeafHeap, Leaf
-from aspen.library.signals.combine import XSMean
+from aspen.library.signals.combine import XSMean, XSMeanSimple
 
 
 class TestSignal(unittest.TestCase):
@@ -118,20 +118,26 @@ class TestSignals(unittest.TestCase):
         )
 
     def test_smean(self):
-        """Test SMean object"""
-        smean = XSMean(
+        """Test SMean objects"""
+        signals = [
             SignalDF("bins1", self.bins),
             SignalDF("bins2", self.bins + 1),
-            name="test",
-            direction=SignalType.DIRECTIONAL,
-        )
-        build = smean.build()
+            SignalDF("bins3", self.bins * 4.5),
+        ]
+        xsmean = XSMean(*signals, name="test", direction=SignalType.DIRECTIONAL)
+        xsms = XSMeanSimple(*signals, name="test", direction=SignalType.DIRECTIONAL)
 
-        pd.testing.assert_series_equal(
-            build.iloc[0].sort_index(),
-            ((self.bins.iloc[0] + self.bins.iloc[0] + 1) / 2).sort_index(),
-        )
-        pd.testing.assert_frame_equal(self.bins, smean.build("bins1"))
+        # Calculate test data
+        td = (
+            (self.bins.iloc[0] + self.bins.iloc[0] + 1 + self.bins.iloc[0] * 4.5) / 3
+        ).sort_index()
+
+        # Assertion for XSMean
+        pd.testing.assert_series_equal(xsmean.build().iloc[0].sort_index(), td)
+        pd.testing.assert_frame_equal(self.bins, xsmean.build("bins1"))
+        # Assertion for XSMean Simple
+        pd.testing.assert_series_equal(xsms.build().iloc[0].sort_index(), td)
+        pd.testing.assert_frame_equal(self.bins, xsms.build("bins1"))
 
     def test_direction(self):
         """Test flipping signal direction"""
